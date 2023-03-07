@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/c/Users/Juan Diego/Desktop/data-structures/bplus-tree/bplustree.h
+cmath
+-
+queue
+-
+list
+-
+node.h
+/mnt/c/Users/Juan Diego/Desktop/data-structures/bplus-tree/node.h
+
+/mnt/c/Users/Juan Diego/Desktop/data-structures/bplus-tree/main.cpp
+iostream
+-
+bplustree.h
+/mnt/c/Users/Juan Diego/Desktop/data-structures/bplus-tree/bplustree.h
+
+/mnt/c/Users/Juan Diego/Desktop/data-structures/bplus-tree/node.h
+vector
+-
+

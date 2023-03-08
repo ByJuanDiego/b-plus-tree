@@ -101,6 +101,20 @@ public:
 
     explicit BPlusTree(int M) : M(M), n(0), m(static_cast<int>(std::ceil(M / 2.0)) - 1), h(-1), root(nullptr) {}
 
+    ~BPlusTree() {
+        this->root->killSelf();
+    }
+
+    void clear() {
+        if (!root) {
+            return;
+        }
+
+        this->root->killSelf();
+        this->h = -1;
+        this->n = 0;
+    }
+
     void insert(KT key) {
         if (!root) {
             root = new Node<KT>(M, true);

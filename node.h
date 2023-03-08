@@ -12,10 +12,10 @@ struct Node {
     std::vector<KT> keys;
     std::vector<Node<KT> *> children;
     Node<KT>* next_leaf;
-    bool leaf;
-    int count;
+    bool is_leaf;
+    int n_children;
 
-    explicit Node(int M, bool is_leaf = false) : count(0), leaf(is_leaf), next_leaf(nullptr) {
+    explicit Node(int M, bool is_leaf = false) : n_children(0), is_leaf(is_leaf), next_leaf(nullptr) {
         keys.resize(M, 0);
         children.resize(M + 1, nullptr);
     }
@@ -26,7 +26,7 @@ struct Node {
     }
 
     void killSelf() {
-        for (int i = 0; i <= count; ++i) {
+        for (int i = 0; i <= n_children; ++i) {
             if (children[i]) {
                 children[i]->killSelf();
             }
@@ -37,7 +37,7 @@ struct Node {
     void print(std::ostream &os, const int &M) const {
         os << "[";
         for (int i = 0; i < (M - 1); ++i) {
-            os << ((i < count) ? std::to_string(keys[i]) : "") << ((i < M - 2) ? "|" : "");
+            os << ((i < n_children) ? std::to_string(keys[i]) : "") << ((i < M - 2) ? "|" : "");
         }
         os << "]";
     }

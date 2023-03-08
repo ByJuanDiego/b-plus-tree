@@ -20,33 +20,33 @@ private:
     int h; // altura del arbol
 
     void nonFullInsert(KT key, Node<KT> *&node) {
-        if (node->leaf) {
-            int i = node->count;
+        if (node->is_leaf) {
+            int i = node->n_children;
             for (; i >= 1 && key < node->keys[i - 1]; --i) {
                 node->keys[i] = node->keys[i - 1];
             }
 
             node->keys[i] = key;
-            ++node->count;
+            ++node->n_children;
             return;
         }
 
         Node<KT> *&father = node;
         int j = 0;
-        for (; j < father->count && key > father->keys[j]; ++j);
+        for (; j < father->n_children && key > father->keys[j]; ++j);
 
         Node<KT> *&child = father->children[j];
-        if (child->count < M) {
+        if (child->n_children < M) {
             nonFullInsert(key, child);
         }
-        if (child->count == M) {
+        if (child->n_children == M) {
             split(father, j, child);
         }
     }
 
     void splitInternalNode(Node<KT> *&father, int i, Node<KT> *&child) {
         auto *partition = new Node<KT>(M, false);
-        partition->count = m;
+        partition->n_children = m;
 
         for (int j = 0; j < m; ++j)
             partition->keys[j] = child->keys[j + m + 1 + ((M % 2) ? 0 : 1)];
@@ -54,43 +54,43 @@ private:
         for (int j = 0; j < m + 1; ++j)
             partition->children[j] = child->children[j + m + 1 + ((M % 2) ? 0 : 1)];
 
-        for (int j = father->count; j > i; --j)
+        for (int j = father->n_children; j > i; --j)
             father->children[j + 1] = father->children[j];
 
-        for (int j = father->count; j > i; --j)
+        for (int j = father->n_children; j > i; --j)
             father->keys[j] = father->keys[j - 1];
 
-        child->count = m + ((M % 2) ? 0 : 1);
+        child->n_children = m + ((M % 2) ? 0 : 1);
 
         father->children[i + 1] = partition;
         father->keys[i] = child->keys[m + ((M % 2) ? 0 : 1)];
-        father->count++;
+        father->n_children++;
     }
 
     void splitLeaf(Node<KT> *&father, int i, Node<KT> *&leaf) {
         auto *partition = new Node<KT>(M, true);
-        partition->count = m + ((M % 2) ? 0 : 1);
+        partition->n_children = m + ((M % 2) ? 0 : 1);
         partition->next_leaf = leaf->next_leaf;
 
         for (int j = 0; j < m + ((M % 2) ? 0 : 1); ++j)
             partition->keys[j] = leaf->keys[j + m + 1];
 
-        for (int j = father->count; j > i; --j)
+        for (int j = father->n_children; j > i; --j)
             father->children[j + 1] = father->children[j];
 
-        for (int j = father->count; j > i; --j)
+        for (int j = father->n_children; j > i; --j)
             father->keys[j] = father->keys[j - 1];
 
         leaf->next_leaf = partition;
-        leaf->count = m + 1;
+        leaf->n_children = m + 1;
 
         father->children[i + 1] = partition;
         father->keys[i] = leaf->keys[m];
-        father->count++;
+        father->n_children++;
     }
 
     void split(Node<KT> *&father, int i, Node<KT> *&child) {
-        if (child->leaf) {
+        if (child->is_leaf) {
             splitLeaf(father, i, child);
         } else {
             splitInternalNode(father, i, child);
@@ -115,14 +115,22 @@ public:
         this->n = 0;
     }
 
+    int height() {
+        return this->h;
+    }
+
+    int size() {
+        return this->n;
+    }
+
     void insert(KT key) {
         if (!root) {
             root = new Node<KT>(M, true);
         }
-        if (root->count < M) {
+        if (root->n_children < M) {
             nonFullInsert(key, root);
         }
-        if (root->count == M) {
+        if (root->n_children == M) {
             Node<KT> *old_root = this->root;
             root = new Node<KT>(M);
             root->children[0] = old_root;
@@ -151,10 +159,10 @@ public:
             }
 
             node->print(os, M);
-            os << (node->leaf ? "->" : step);
+            os << (node->is_leaf ? "->" : step);
 
-            if (!node->leaf) {
-                for (int i = 0; i <= node->count; ++i) {
+            if (!node->is_leaf) {
+                for (int i = 0; i <= node->n_children; ++i) {
                     Q.push({node->children[i], l + 1});
                 }
             }
@@ -165,14 +173,14 @@ public:
         std::list<KT> search;
 
         Node<KT> *node = root;
-        while (!node->leaf) {
+        while (!node->is_leaf) {
             int i = 0;
-            for (; i < node->count && node->keys[i] < min; ++i);
+            for (; i < node->n_children && node->keys[i] < min; ++i);
             node = node->children[i];
         }
 
         while (node) {
-            for (int i = 0; i < node->count; ++i) {
+            for (int i = 0; i < node->n_children; ++i) {
                 if (node->keys[i] > max) {
                     return search;
                 }

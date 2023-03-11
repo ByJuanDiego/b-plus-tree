@@ -5,12 +5,13 @@
 #ifndef BPLUS_TREE_BPLUSTREE_H
 #define BPLUS_TREE_BPLUSTREE_H
 
+#include <functional>
 #include <cmath>
 #include <queue>
 #include <list>
 #include "node.h"
 
-template<typename KT>
+template<typename KT, typename KV>
 class BPlusTree {
 private:
     Node<KT> *root;
@@ -40,66 +41,13 @@ private:
             nonFullInsert(key, child);
         }
         if (child->n_children == M) {
-            split(father, j, child);
-        }
-    }
-
-    void splitInternalNode(Node<KT> *&father, int i, Node<KT> *&child) {
-        auto *partition = new Node<KT>(M, false);
-        partition->n_children = m;
-
-        for (int j = 0; j < m; ++j)
-            partition->keys[j] = child->keys[j + m + 1 + ((M % 2) ? 0 : 1)];
-
-        for (int j = 0; j < m + 1; ++j)
-            partition->children[j] = child->children[j + m + 1 + ((M % 2) ? 0 : 1)];
-
-        for (int j = father->n_children; j > i; --j)
-            father->children[j + 1] = father->children[j];
-
-        for (int j = father->n_children; j > i; --j)
-            father->keys[j] = father->keys[j - 1];
-
-        child->n_children = m + ((M % 2) ? 0 : 1);
-
-        father->children[i + 1] = partition;
-        father->keys[i] = child->keys[m + ((M % 2) ? 0 : 1)];
-        father->n_children++;
-    }
-
-    void splitLeaf(Node<KT> *&father, int i, Node<KT> *&leaf) {
-        auto *partition = new Node<KT>(M, true);
-        partition->n_children = m + ((M % 2) ? 0 : 1);
-        partition->next_leaf = leaf->next_leaf;
-
-        for (int j = 0; j < m + ((M % 2) ? 0 : 1); ++j)
-            partition->keys[j] = leaf->keys[j + m + 1];
-
-        for (int j = father->n_children; j > i; --j)
-            father->children[j + 1] = father->children[j];
-
-        for (int j = father->n_children; j > i; --j)
-            father->keys[j] = father->keys[j - 1];
-
-        leaf->next_leaf = partition;
-        leaf->n_children = m + 1;
-
-        father->children[i + 1] = partition;
-        father->keys[i] = leaf->keys[m];
-        father->n_children++;
-    }
-
-    void split(Node<KT> *&father, int i, Node<KT> *&child) {
-        if (child->is_leaf) {
-            splitLeaf(father, i, child);
-        } else {
-            splitInternalNode(father, i, child);
+            child->split(father, j, M, m);
         }
     }
 
 public:
 
-    explicit BPlusTree(int M) : M(M), n(0), m(static_cast<int>(std::ceil(M / 2.0)) - 1), h(-1), root(nullptr) {}
+    explicit BPlusTree(int M = 3) : M(M), n(0), m(static_cast<int>(std::ceil(M / 2.0)) - 1), h(-1), root(nullptr) {}
 
     ~BPlusTree() {
         this->root->killSelf();
@@ -113,6 +61,7 @@ public:
         this->root->killSelf();
         this->h = -1;
         this->n = 0;
+        this->root = nullptr;
     }
 
     int height() {
@@ -125,16 +74,16 @@ public:
 
     void insert(KT key) {
         if (!root) {
-            root = new Node<KT>(M, true);
+            root = new leafNode<KT, KV>(M, true);
         }
         if (root->n_children < M) {
             nonFullInsert(key, root);
         }
         if (root->n_children == M) {
             Node<KT> *old_root = this->root;
-            root = new Node<KT>(M);
+            root = new internalNode<KT>(M);
             root->children[0] = old_root;
-            split(root, 0, old_root);
+            old_root->split(root, 0, M, m);
             ++this->h;
         }
         ++this->n;

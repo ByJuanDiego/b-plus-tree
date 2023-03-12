@@ -11,25 +11,26 @@
 #include <list>
 #include "node.h"
 
-template<typename KT, typename KV>
+template<typename KV, typename KT>
 class BPlusTree {
 private:
+    std::function<KT(KV)> f;
     Node<KT> *root;
     int M; // grado u orden del arbol
     int n; // total de elementos en el arbol
     int m; // cantidad minima de keys
     int h; // altura del arbol
 
-    void nonFullInsert(KT key, KV value, Node<KT> *&node) {
+    void nonFullInsert(KV value, Node<KT> *&node) {
         if (node->is_leaf) {
             auto *leaf = reinterpret_cast<leafNode<KT, KV> *>(node);
             int i = leaf->n_keys;
-            for (; i >= 1 && key < leaf->keys[i - 1]; --i) {
+            for (; i >= 1 && f(value) < leaf->keys[i - 1]; --i) {
                 leaf->keys[i] = leaf->keys[i - 1];
                 leaf->records[i] = leaf->records[i - 1];
             }
 
-            leaf->keys[i] = key;
+            leaf->keys[i] = f(value);
             leaf->records[i] = value;
             ++leaf->n_keys;
             return;
@@ -37,11 +38,11 @@ private:
 
         Node<KT> *&father = node;
         int j = 0;
-        for (; j < father->n_keys && key > father->keys[j]; ++j);
+        for (; j < father->n_keys && f(value) > father->keys[j]; ++j);
 
         Node<KT> *&child = father->children[j];
         if (child->n_keys < M) {
-            nonFullInsert(key, value, child);
+            nonFullInsert(value, child);
         }
         if (child->n_keys == M) {
             child->split(father, j, M, m);
@@ -59,7 +60,10 @@ private:
 
 public:
 
-    explicit BPlusTree(int M = 3) : M(M), n(0), m(static_cast<int>(std::ceil(M / 2.0)) - 1), h(-1), root(nullptr) {}
+    explicit BPlusTree(std::function<KT(KV)> func, int M = 3) : M(M), n(0),
+                                                                m(static_cast<int>(std::ceil(M / 2.0)) - 1),
+                                                                h(-1), root(nullptr), f{func} {
+    }
 
     ~BPlusTree() {
         this->root->killSelf();
@@ -84,12 +88,13 @@ public:
         return this->n;
     }
 
-    void insert(KT key, KV value) {
+    void insert(KV value) {
         if (!root) {
             root = new leafNode<KT, KV>(M, true);
+            ++this->h;
         }
         if (root->n_keys < M) {
-            nonFullInsert(key, value, root);
+            nonFullInsert(value, root);
         }
         if (root->n_keys == M) {
             Node<KT> *old_root = this->root;

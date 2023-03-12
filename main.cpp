@@ -18,27 +18,28 @@ struct transaction {
 };
 
 std::ostream &operator<<(std::ostream &os, const transaction &transaction) {
-    os << "e: " << transaction.emisor << " r: " << transaction.receptor << " a: " << transaction.ammount << " d: "
-       << transaction.date;
+    os << "emisor: " << transaction.emisor << ", receptor: " << transaction.receptor << ", ammount: "
+       << transaction.ammount << ", date: " << transaction.date;
     return os;
 }
 
 int main() {
-    BPlusTree<int, transaction *> bp(5);
+    BPlusTree<transaction *, int> bp([&](transaction *tx) {
+        return tx->ammount;
+    }, 5);
+
     std::ifstream file("transactions.txt");
-    std::string emisor;
-    std::string receptor;
-    int date;
-    int ammount;
+    std::string emisor, receptor;
+    int date, ammount;
 
     while (file >> emisor >> receptor >> ammount >> date) {
         auto *t = new transaction(emisor, receptor, date, ammount);
-        bp.insert(t->ammount, t);
+        bp.insert(t);
     }
 
-    for (const transaction *i: bp.searchBetween(15, 900)) {
+    for (const transaction *i: bp.searchBetween(500, 900)) {
         std::cout << *i << std::endl;
     }
-    std::cout << std::endl;
+
     return 0;
 }

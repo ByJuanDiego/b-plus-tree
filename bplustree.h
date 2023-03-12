@@ -11,15 +11,18 @@
 #include <list>
 #include "node.h"
 
-template<typename KV, typename KT>
+template<typename KT, typename KV, typename Index = std::function<KT(KV)>>
 class BPlusTree {
 private:
-    std::function<KT(KV)> f;
+
+    Index f;
     Node<KT> *root;
-    int M; // grado u orden del arbol
-    int n; // total de elementos en el arbol
-    int m; // cantidad minima de keys
-    int h; // altura del arbol
+
+    int M; // degree of the tree
+    int m; // minimum number of keys in a node
+
+    int n; // total of elements in leaf nodes
+    int h; // height of the tree
 
     void nonFullInsert(KV value, Node<KT> *&node) {
         if (node->is_leaf) {
@@ -50,6 +53,9 @@ private:
     }
 
     leafNode<KT, KV> *searchNode(Node<KT> *node, KT key) {
+        if (!node) {
+            return nullptr;
+        }
         while (!node->is_leaf) {
             int i = 0;
             for (; i < node->n_keys && node->keys[i] < key; ++i);
@@ -60,12 +66,14 @@ private:
 
 public:
 
-    explicit BPlusTree(std::function<KT(KV)> func, int M = 3) : M(M), n(0),
-                                                                m(static_cast<int>(std::ceil(M / 2.0)) - 1),
-                                                                h(-1), root(nullptr), f{func} {
-    }
+    explicit BPlusTree(Index func, int M = 3) :
+            M(M), n(0), m(int(std::ceil(M / 2.0)) - 1),
+            h(-1), root(nullptr), f{func} {}
 
     ~BPlusTree() {
+        if (!root) {
+            return;
+        }
         this->root->killSelf();
     }
 
@@ -73,7 +81,6 @@ public:
         if (!root) {
             return;
         }
-
         this->root->killSelf();
         this->h = -1;
         this->n = 0;
@@ -86,6 +93,10 @@ public:
 
     int size() {
         return this->n;
+    }
+
+    bool empty() {
+        return !this->root;
     }
 
     void insert(KV value) {
@@ -140,9 +151,12 @@ public:
         leafNode<KT, KV> *leaf = searchNode(root, key);
 
         while (leaf) {
-            for (int i = 0; i < leaf->n_keys; ++i)
+            for (int i = 0; i < leaf->n_keys; ++i) {
+                if (leaf->keys[i] > key)
+                    return search;
                 if (leaf->keys[i] == key)
                     search.push_back(leaf->records[i]);
+            }
             leaf = leaf->next_leaf;
         }
         return search;
@@ -170,7 +184,7 @@ public:
 
         while (leaf) {
             for (int i = 0; i < leaf->n_keys; ++i)
-                if (leaf->keys[i] >= min)
+                if (leaf->keys[i] > min)
                     search.push_back(leaf->records[i]);
             leaf = leaf->next_leaf;
         }
@@ -183,7 +197,7 @@ public:
 
         while (leaf) {
             for (int i = (leaf->n_keys - 1); i >= 0; --i)
-                if (leaf->keys[i] <= max)
+                if (leaf->keys[i] < max)
                     search.push_front(leaf->records[i]);
             leaf = leaf->prev_leaf;
         }

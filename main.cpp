@@ -7,7 +7,7 @@ struct transaction {
     std::string emisor;
     std::string receptor;
     int ammount;
-    int date;
+    int date; // unix timestamp date
 
     explicit transaction(std::string e, std::string r, int date, int ammount) :
             emisor(std::move(e)),
@@ -38,22 +38,31 @@ int main() {
         bp.insert(t);
     }
 
-    for (const transaction *i: bp.searchAbove(8000)) {
+    for (const transaction *i: bp.searchAbove(6399)) {
         std::cout << *i << std::endl;
-    }
+    } std::cout << std::endl;
 
     for (const transaction *i: bp.searchBelow(50)) {
         std::cout << *i << std::endl;
-    }
+    } std::cout << std::endl;
 
     for (const transaction *i: bp.searchEqual(2200)) {
         std::cout << *i << std::endl;
-    }
+    } std::cout << std::endl;
 
     for (const transaction *i: bp.searchBetween(50, 200)) {
         std::cout << *i << std::endl;
-    }
+    } std::cout << std::endl;
 
-    bp.print(std::cout);
+    for (const transaction *i: bp.searchMax()) {
+        std::cout << *i << std::endl;
+    } std::cout << std::endl;
+
+    for (const transaction *i: bp.searchMin()) {
+        std::cout << *i << std::endl;
+    } std::cout << std::endl;
+
+    std::ofstream resultantTree("out.txt");
+    bp.print(resultantTree);
     return 0;
 }

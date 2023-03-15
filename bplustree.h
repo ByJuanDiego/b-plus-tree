@@ -204,6 +204,49 @@ public:
         return search;
     }
 
+    std::list<KV> searchMax() {
+        std::list<KV> maxValues;
+        if (this->empty())
+            return maxValues;
+
+        Node<KT> *node = root;
+        while (!node->is_leaf)
+            node = node->children[node->n_keys];
+
+        auto *leaf = reinterpret_cast<leafNode<KT, KV> *>(node);
+        KT max = leaf->keys[leaf->n_keys - 1];
+        while (leaf) {
+            for (int j = (leaf->n_keys - 1); j >= 0; --j) {
+                if (leaf->keys[j] != max)
+                    return maxValues;
+                maxValues.push_front(leaf->records[j]);
+            }
+            leaf = leaf->prev_leaf;
+        }
+        return maxValues;
+    }
+
+    std::list<KV> searchMin() {
+        std::list<KV> minValues;
+        if (this->empty())
+            return minValues;
+
+        Node<KT> *node = root;
+        while (!node->is_leaf)
+            node = node->children[0];
+
+        auto *leaf = reinterpret_cast<leafNode<KT, KV> *>(node);
+        KT min = leaf->keys[0];
+        while (leaf) {
+            for (int j = 0; j < leaf->n_keys; ++j) {
+                if (leaf->keys[j] != min)
+                    return minValues;
+                minValues.push_front(leaf->records[j]);
+            }
+            leaf = leaf->next_leaf;
+        }
+        return minValues;
+    }
 };
 
 #endif //BPLUS_TREE_BPLUSTREE_H

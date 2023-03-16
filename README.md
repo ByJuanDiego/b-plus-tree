@@ -79,7 +79,7 @@ std::list<KV> searchMax();
 std::list<KV> searchBelow(KT max, bool includeMax);
 ```
 - this method returns an ```std::list``` that contains the $k$ records which index attribute are lesser than the key value passed as parameter, this key is the ```max``` value and determines the superior limit of the search
-- this method is semantically equivalent to the sql query: ```SELECT * FROM T WHERE T.a = (SELECT min(T1.a) FROM T T1)```
+- this method is semantically equivalent to the sql query: ```SELECT * FROM T WHERE T.a < max```
 - the search returned ***do not includes*** the superior limit for default, to include it, set the optional parameter ```includeMax``` as ```true```
 - time complexity gets worse when the ```max``` value gets closer to the maximum value in the tree
 

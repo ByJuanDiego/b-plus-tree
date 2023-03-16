@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/bplus_tree.dir/main.cpp.o"
+  "CMakeFiles/bplus_tree.dir/main.cpp.o.d"
   "bplus_tree"
   "bplus_tree.pdb"
 )

@@ -6,6 +6,8 @@
 #define BPLUS_TREE_NODE_H
 
 #include <vector>
+#include <string>
+#include <ostream>
 
 template<typename KT>
 struct Node {

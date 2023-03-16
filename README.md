@@ -47,7 +47,7 @@ Index f;
 
 ## B+ Tree member functions
 
-All the search operations are made on a $O(log_{M}(n) + k)$ time complexity, where $k$ is the cost of traversing the leaf nodes and could be differente depending of the type of search and the logarithmic cost belongs to the cost of descend in the tree
+All the search operations are made on a $O(log_{M}(n) + k)$ time complexity, where $k$ is the cost of traversing the leaf nodes and could be differente depending of the type of search, and the logarithmic cost belongs to the cost of descending in the tree
 
 ```c++
 std::list<KV> search(KT key);

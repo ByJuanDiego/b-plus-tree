@@ -25,7 +25,7 @@ std::ostream &operator<<(std::ostream &os, const transaction &transaction) {
 }
 
 int main() {
-    int M = 5;
+    int M = 3;
     std::function<int(transaction *)> func = [&](transaction *tx) -> int { return tx->ammount; };
     BPlusTree<int, transaction *> bp(func, M);
 
@@ -38,19 +38,11 @@ int main() {
         bp.insert(t);
     }
 
-    for (const transaction *i: bp.searchAbove(6399)) {
+    for (const transaction *i: bp.search(2200)) {
         std::cout << *i << std::endl;
     } std::cout << std::endl;
 
-    for (const transaction *i: bp.searchBelow(50)) {
-        std::cout << *i << std::endl;
-    } std::cout << std::endl;
-
-    for (const transaction *i: bp.searchEqual(2200)) {
-        std::cout << *i << std::endl;
-    } std::cout << std::endl;
-
-    for (const transaction *i: bp.searchBetween(50, 200)) {
+    for (const transaction *i: bp.searchMin()) {
         std::cout << *i << std::endl;
     } std::cout << std::endl;
 
@@ -58,7 +50,15 @@ int main() {
         std::cout << *i << std::endl;
     } std::cout << std::endl;
 
-    for (const transaction *i: bp.searchMin()) {
+    for (const transaction *i: bp.searchBelow(50, true)) {
+        std::cout << *i << std::endl;
+    } std::cout << std::endl;
+
+    for (const transaction *i: bp.searchAbove(6400, false)) {
+        std::cout << *i << std::endl;
+    } std::cout << std::endl;
+
+    for (const transaction *i: bp.searchBetween(9, 98, false, false)) {
         std::cout << *i << std::endl;
     } std::cout << std::endl;
 

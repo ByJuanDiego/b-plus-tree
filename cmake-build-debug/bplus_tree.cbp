@@ -85,6 +85,9 @@
 		<Unit filename="/mnt/c/Users/Juan Diego/Desktop/data-structures/bplus-tree/bplustree.h">
 			<Option target="bplus_tree"/>
 		</Unit>
+		<Unit filename="/mnt/c/Users/Juan Diego/Desktop/data-structures/bplus-tree/bplustree_def.h">
+			<Option target="bplus_tree"/>
+		</Unit>
 		<Unit filename="/mnt/c/Users/Juan Diego/Desktop/data-structures/bplus-tree/main.cpp">
 			<Option target="bplus_tree"/>
 		</Unit>

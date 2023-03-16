@@ -1,252 +1,132 @@
 //
-// Created by Juan Diego on 3/7/2023.
+// Created by Juan Diego on 3/15/2023.
 //
 
-#ifndef BPLUS_TREE_BPLUSTREE_H
-#define BPLUS_TREE_BPLUSTREE_H
+#include "bplustree_def.h"
 
-#include <functional>
-#include <cmath>
-#include <queue>
-#include <list>
-#include "node.h"
-
-template<typename KT, typename KV, typename Index = std::function<KT(KV)>>
-class BPlusTree {
-private:
-
-    Index f;
-    Node<KT> *root;
-
-    int M; // degree of the tree
-    int m; // minimum number of keys in a node
-
-    int n; // total of elements in leaf nodes
-    int h; // height of the tree
-
-    void nonFullInsert(KV value, Node<KT> *&node) {
-        if (node->is_leaf) {
-            auto *leaf = reinterpret_cast<leafNode<KT, KV> *>(node);
-            int i = leaf->n_keys;
-            for (; i >= 1 && f(value) < leaf->keys[i - 1]; --i) {
-                leaf->keys[i] = leaf->keys[i - 1];
-                leaf->records[i] = leaf->records[i - 1];
-            }
-
-            leaf->keys[i] = f(value);
-            leaf->records[i] = value;
-            ++leaf->n_keys;
-            return;
-        }
-
-        Node<KT> *&father = node;
-        int j = 0;
-        for (; j < father->n_keys && f(value) > father->keys[j]; ++j);
-
-        Node<KT> *&child = father->children[j];
-        if (child->n_keys < M) {
-            nonFullInsert(value, child);
-        }
-        if (child->n_keys == M) {
-            child->split(father, j, M, m);
-        }
+template<typename KT, typename KV, typename Index>
+leafNode<KT, KV> *BPlusTree<KT, KV, Index>::searchNode(Node<KT> *node, KT key) {
+    if (!node) {
+        return nullptr;
     }
-
-    leafNode<KT, KV> *searchNode(Node<KT> *node, KT key) {
-        if (!node) {
-            return nullptr;
-        }
-        while (!node->is_leaf) {
-            int i = 0;
-            for (; i < node->n_keys && node->keys[i] < key; ++i);
-            node = node->children[i];
-        }
-        return reinterpret_cast<leafNode<KT, KV> *>(node);
+    while (!node->is_leaf) {
+        int i = 0;
+        for (; i < node->n_keys && node->keys[i] < key; ++i);
+        node = node->children[i];
     }
+    return reinterpret_cast<leafNode<KT, KV> *>(node);
+}
 
-public:
+template<typename KT, typename KV, typename Index>
+std::list<KV> BPlusTree<KT, KV, Index>::search(KT key) {
+    std::list<KV> values;
+    leafNode<KT, KV> *leaf = searchNode(root, key);
 
-    explicit BPlusTree(Index func, int M = 3) :
-            M(M), n(0), m(int(std::ceil(M / 2.0)) - 1),
-            h(-1), root(nullptr), f{func} {}
-
-    ~BPlusTree() {
-        if (!root) {
-            return;
+    while (leaf) {
+        for (int i = 0; i < leaf->n_keys; ++i) {
+            if (leaf->keys[i] > key)
+                return values;
+            if (leaf->keys[i] == key)
+                values.push_back(leaf->records[i]);
         }
-        this->root->killSelf();
+        leaf = leaf->next_leaf;
     }
+    return values;
+}
 
-    void clear() {
-        if (!root) {
-            return;
+template<typename KT, typename KV, typename Index>
+std::list<KV> BPlusTree<KT, KV, Index>::searchMin() {
+    std::list<KV> values;
+    if (this->empty())
+        return values;
+
+    Node<KT> *node = root;
+    while (!node->is_leaf)
+        node = node->children[0];
+
+    auto *leaf = reinterpret_cast<leafNode<KT, KV> *>(node);
+
+    KT min = leaf->keys[0];
+    while (leaf) {
+        for (int j = 0; j < leaf->n_keys; ++j) {
+            if (leaf->keys[j] != min)
+                return values;
+            values.push_front(leaf->records[j]);
         }
-        this->root->killSelf();
-        this->h = -1;
-        this->n = 0;
-        this->root = nullptr;
+        leaf = leaf->next_leaf;
     }
+    return values;
+}
 
-    int height() {
-        return this->h;
-    }
+template<typename KT, typename KV, typename Index>
+std::list<KV> BPlusTree<KT, KV, Index>::searchMax() {
+    std::list<KV> values;
+    if (this->empty())
+        return values;
 
-    int size() {
-        return this->n;
-    }
+    Node<KT> *node = root;
+    while (!node->is_leaf)
+        node = node->children[node->n_keys];
 
-    bool empty() {
-        return !this->root;
-    }
+    auto *leaf = reinterpret_cast<leafNode<KT, KV> *>(node);
 
-    void insert(KV value) {
-        if (!root) {
-            root = new leafNode<KT, KV>(M, true);
-            ++this->h;
+    KT max = leaf->keys[leaf->n_keys - 1];
+    while (leaf) {
+        for (int j = (leaf->n_keys - 1); j >= 0; --j) {
+            if (leaf->keys[j] != max)
+                return values;
+            values.push_front(leaf->records[j]);
         }
-        if (root->n_keys < M) {
-            nonFullInsert(value, root);
-        }
-        if (root->n_keys == M) {
-            Node<KT> *old_root = this->root;
-            root = new internalNode<KT>(M);
-            root->children[0] = old_root;
-            old_root->split(root, 0, M, m);
-            ++this->h;
-        }
-        ++this->n;
+        leaf = leaf->prev_leaf;
     }
+    return values;
+}
 
-    void print(std::ostream &os, const std::string &step = " ") const {
-        if (!root) {
-            return;
-        }
+template<typename KT, typename KV, typename Index>
+std::list<KV> BPlusTree<KT, KV, Index>::searchBelow(KT max, bool includeMax) {
+    std::list<KV> search;
+    leafNode<KT, KV> *leaf = searchNode(root, max);
+    auto condition = ([&](KT key) { return includeMax ? (key <= max) : (key < max); });
 
-        int level = 0;
-        std::queue<std::pair<Node<KT> *, int>> Q;
-
-        Q.push({root, level});
-        while (!Q.empty()) {
-            auto [node, l] = Q.front();
-            Q.pop();
-
-            if (l > level) {
-                ++level;
-                os << std::endl;
-            }
-
-            node->print(os, M);
-            os << (node->is_leaf && reinterpret_cast<leafNode<KT, KV> *>(node)->next_leaf ? "=>" : step);
-
-            if (!node->is_leaf) {
-                for (int i = 0; i <= node->n_keys; ++i) {
-                    Q.push({node->children[i], l + 1});
-                }
-            }
-        }
+    while (leaf) {
+        for (int i = (leaf->n_keys - 1); i >= 0; --i)
+            if (condition(leaf->keys[i]))
+                search.push_front(leaf->records[i]);
+        leaf = leaf->prev_leaf;
     }
+    return search;
+}
 
-    std::list<KV> searchEqual(KT key) {
-        std::list<KV> search;
-        leafNode<KT, KV> *leaf = searchNode(root, key);
+template<typename KT, typename KV, typename Index>
+std::list<KV> BPlusTree<KT, KV, Index>::searchAbove(KT min, bool includeMin) {
+    std::list<KV> search;
+    leafNode<KT, KV> *leaf = searchNode(root, min);
+    auto condition = ([&](KT key) { return includeMin ? (key >= min) : (key > min); });
 
-        while (leaf) {
-            for (int i = 0; i < leaf->n_keys; ++i) {
-                if (leaf->keys[i] > key)
-                    return search;
-                if (leaf->keys[i] == key)
-                    search.push_back(leaf->records[i]);
-            }
-            leaf = leaf->next_leaf;
-        }
-        return search;
+    while (leaf) {
+        for (int i = 0; i < leaf->n_keys; ++i)
+            if (condition(leaf->keys[i]))
+                search.push_back(leaf->records[i]);
+        leaf = leaf->next_leaf;
     }
+    return search;
+}
 
-    std::list<KV> searchBetween(KT min, KT max) {
-        std::list<KV> search;
-        leafNode<KT, KV> *leaf = searchNode(root, min);
+template<typename KT, typename KV, typename Index>
+std::list<KV> BPlusTree<KT, KV, Index>::searchBetween(KT min, KT max, bool includeMin, bool includeMax) {
+    std::list<KV> search;
+    leafNode<KT, KV> *leaf = searchNode(root, min);
+    auto conditionMax = ([&](KT key) { return includeMax ? (key > max) : (key >= max); });
+    auto conditionMin = ([&](KT key) { return includeMin ? (key >= min) : (key > min); });
 
-        while (leaf) {
-            for (int i = 0; i < leaf->n_keys; ++i) {
-                if (leaf->keys[i] > max)
-                    return search;
-                if (leaf->keys[i] >= min)
-                    search.push_back(leaf->records[i]);
-            }
-            leaf = leaf->next_leaf;
+    while (leaf) {
+        for (int i = 0; i < leaf->n_keys; ++i) {
+            if (conditionMax(leaf->keys[i]))
+                return search;
+            if (conditionMin(leaf->keys[i]))
+                search.push_back(leaf->records[i]);
         }
-        return search;
+        leaf = leaf->next_leaf;
     }
-
-    std::list<KV> searchAbove(KT min) {
-        std::list<KV> search;
-        leafNode<KT, KV> *leaf = searchNode(root, min);
-
-        while (leaf) {
-            for (int i = 0; i < leaf->n_keys; ++i)
-                if (leaf->keys[i] > min)
-                    search.push_back(leaf->records[i]);
-            leaf = leaf->next_leaf;
-        }
-        return search;
-    }
-
-    std::list<KV> searchBelow(KT max) {
-        std::list<KV> search;
-        leafNode<KT, KV> *leaf = searchNode(root, max);
-
-        while (leaf) {
-            for (int i = (leaf->n_keys - 1); i >= 0; --i)
-                if (leaf->keys[i] < max)
-                    search.push_front(leaf->records[i]);
-            leaf = leaf->prev_leaf;
-        }
-        return search;
-    }
-
-    std::list<KV> searchMax() {
-        std::list<KV> maxValues;
-        if (this->empty())
-            return maxValues;
-
-        Node<KT> *node = root;
-        while (!node->is_leaf)
-            node = node->children[node->n_keys];
-
-        auto *leaf = reinterpret_cast<leafNode<KT, KV> *>(node);
-        KT max = leaf->keys[leaf->n_keys - 1];
-        while (leaf) {
-            for (int j = (leaf->n_keys - 1); j >= 0; --j) {
-                if (leaf->keys[j] != max)
-                    return maxValues;
-                maxValues.push_front(leaf->records[j]);
-            }
-            leaf = leaf->prev_leaf;
-        }
-        return maxValues;
-    }
-
-    std::list<KV> searchMin() {
-        std::list<KV> minValues;
-        if (this->empty())
-            return minValues;
-
-        Node<KT> *node = root;
-        while (!node->is_leaf)
-            node = node->children[0];
-
-        auto *leaf = reinterpret_cast<leafNode<KT, KV> *>(node);
-        KT min = leaf->keys[0];
-        while (leaf) {
-            for (int j = 0; j < leaf->n_keys; ++j) {
-                if (leaf->keys[j] != min)
-                    return minValues;
-                minValues.push_front(leaf->records[j]);
-            }
-            leaf = leaf->next_leaf;
-        }
-        return minValues;
-    }
-};
-
-#endif //BPLUS_TREE_BPLUSTREE_H
+    return search;
+}

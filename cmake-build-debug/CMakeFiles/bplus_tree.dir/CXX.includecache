@@ -7,10 +7,6 @@
 #IncludeRegexTransform: 
 
 /mnt/c/Users/Juan Diego/Desktop/data-structures/bplus-tree/bplustree.h
-bplustree_def.h
-/mnt/c/Users/Juan Diego/Desktop/data-structures/bplus-tree/bplustree_def.h
-
-/mnt/c/Users/Juan Diego/Desktop/data-structures/bplus-tree/bplustree_def.h
 functional
 -
 cmath

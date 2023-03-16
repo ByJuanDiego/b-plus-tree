@@ -37,7 +37,7 @@ int h;
 ```c++
 Node<KT> *root;
 ```
-- root node is the reference the first level of the tree; each node is reached from the root
+- root node is a reference to the first level of the tree; each node is reached from the root
 
 ```c++
 Index f;

@@ -1,5 +1,7 @@
 # B+ Tree C++ implementation
 
+![BPlusTree](https://iq.opengenus.org/content/images/2018/06/b--search.jpg)
+
 ## B+ Tree template type parameters
 ```c++
 template<typename KT, typename KV, typename Index = std::function<KT(KV)>>

@@ -1,1 +1,0 @@
-/usr/bin/c++ -g CMakeFiles/bplus_tree.dir/main.cpp.o -o bplus_tree 

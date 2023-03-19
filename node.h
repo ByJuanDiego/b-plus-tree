@@ -27,10 +27,10 @@ struct node {
         children.clear();
     }
 
-    virtual void killSelf() {
+    virtual void kill_self() {
         for (int i = 0; i <= this->n_keys; ++i) {
             if (this->children[i]) {
-                this->children[i]->killSelf();
+                this->children[i]->kill_self();
             }
         }
         delete this;
@@ -46,13 +46,10 @@ struct internal_node : public node<K> {
 
     virtual ~internal_node() = default;
 
-    void print(std::ostream &os, int M, std::function<void(std::ostream &, K)> print_key) {
+    void print(std::ostream &os, std::function<void(std::ostream &, K)> print_key) {
         os << "[";
-        for (int i = 0; i < M; ++i) {
-            if (i < this->n_keys) {
-                print_key(os, this->keys[i]);
-            }
-            os << ((i < (M - 2)) ? "|" : "");
+        for (int i = 0; i < this->n_keys; ++i) {
+            print_key(os, this->keys[i]);
         }
         os << "]";
     }
@@ -95,17 +92,14 @@ struct leaf_node : public node<K> {
         records.clear();
     }
 
-    void print(std::ostream &os, int M,
+    void print(std::ostream &os,
                std::function<void(std::ostream &, K)> key_print,
                std::function<void(std::ostream &, V)> value_print) {
         os << "[";
-        for (int i = 0; i < M; ++i) {
-            if (i < this->n_keys) {
-                key_print(os, this->keys[i]);
-                os << ":";
-                value_print(os, this->records[i]);
-            }
-            os << ((i < (M - 2)) ? "|" : "");
+        for (int i = 0; i < this->n_keys; ++i) {
+            key_print(os, this->keys[i]);
+            os << ":";
+            value_print(os, this->records[i]);
         }
         os << "]";
     }

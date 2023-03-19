@@ -65,7 +65,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    for (const transaction *i: bp.search_above(6400, false)) {
+    for (const transaction *i: bp.search_above(1000, false)) {
         std::cout << i->to_string() << std::endl;
     }
     std::cout << std::endl;

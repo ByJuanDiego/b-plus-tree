@@ -66,14 +66,14 @@ public:
         if (!root) {
             return;
         }
-        this->root->killSelf();
+        this->root->kill_self();
     }
 
     void clear() {
         if (!root) {
             return;
         }
-        this->root->killSelf();
+        this->root->kill_self();
         this->h = -1;
         this->n = 0;
         this->root = nullptr;
@@ -135,11 +135,11 @@ public:
 
             if (node->is_leaf) {
                 auto *leaf = reinterpret_cast<leaf_node<K, V> *>(node);
-                leaf->print(os, M, print_key, print_value);
+                leaf->print(os, print_key, print_value);
                 os << ((leaf->next_leaf) ? " => " : " ");
             } else {
                 auto *internalNode = reinterpret_cast<internal_node<K> *>(node);
-                internalNode->print(os, M, print_key);
+                internalNode->print(os, print_key);
             }
 
             if (!node->is_leaf) {

@@ -9,20 +9,20 @@
 #include <string>
 #include <ostream>
 
-template<typename KT>
-struct Node {
-    std::vector<KT> keys;
+template<typename K>
+struct node {
+    std::vector<K> keys;
     int n_keys;
 
-    std::vector<Node<KT> *> children;
+    std::vector<node<K> *> children;
     bool is_leaf;
 
-    explicit Node(int M, bool is_leaf = false) : n_keys(0), is_leaf(is_leaf) {
-        keys.resize(M, KT());
+    explicit node(int M, bool is_leaf = false) : n_keys(0), is_leaf(is_leaf) {
+        keys.resize(M, K());
         children.resize(M + 1, nullptr);
     }
 
-    virtual ~Node() {
+    virtual ~node() {
         keys.clear();
         children.clear();
     }
@@ -36,28 +36,29 @@ struct Node {
         delete this;
     }
 
-    virtual void print(std::ostream &os, int M) = 0;
-
-    virtual void split(Node<KT> *&father, int i, int M, int m) = 0;
+    virtual void split(node<K> *&father, int i, int M, int m) = 0;
 };
 
-template<typename KT>
-struct internalNode : public Node<KT> {
+template<typename K>
+struct internal_node : public node<K> {
 
-    using Node<KT>::Node;
+    using node<K>::node;
 
-    virtual ~internalNode() = default;
+    virtual ~internal_node() = default;
 
-    void print(std::ostream &os, int M) override {
+    void print(std::ostream &os, int M, std::function<void(std::ostream &, K)> print_key) {
         os << "[";
         for (int i = 0; i < M; ++i) {
-            os << (i < this->n_keys ? std::to_string(this->keys[i]) : "") << ((i < (M - 2)) ? "|" : "");
+            if (i < this->n_keys) {
+                print_key(os, this->keys[i]);
+            }
+            os << ((i < (M - 2)) ? "|" : "");
         }
         os << "]";
     }
 
-    void split(Node<KT> *&father, int i, int M, int m) override {
-        auto *partition = new internalNode<KT>(M, false);
+    void split(node<K> *&father, int i, int M, int m) override {
+        auto *partition = new internal_node<K>(M, false);
         partition->n_keys = m;
 
         for (int j = 0; j < m; ++j)
@@ -80,35 +81,37 @@ struct internalNode : public Node<KT> {
     }
 };
 
-template<typename KT, typename KV>
-struct leafNode : public Node<KT> {
-    std::vector<KV> records;
-    leafNode<KT, KV> *next_leaf;
-    leafNode<KT, KV> *prev_leaf;
+template<typename K, typename V>
+struct leaf_node : public node<K> {
+    std::vector<V> records;
+    leaf_node<K, V> *next_leaf;
+    leaf_node<K, V> *prev_leaf;
 
-    explicit leafNode(int M, bool is_leaf = true) : Node<KT>(M, is_leaf), next_leaf(nullptr), prev_leaf(nullptr) {
-        records.resize(M, KV());
+    explicit leaf_node(int M, bool is_leaf = true) : node<K>(M, is_leaf), next_leaf(nullptr), prev_leaf(nullptr) {
+        records.resize(M, V());
     }
 
-    virtual ~leafNode() {
+    virtual ~leaf_node() {
         records.clear();
     }
 
-    void print(std::ostream &os, int M) override {
+    void print(std::ostream &os, int M,
+               std::function<void(std::ostream &, K)> key_print,
+               std::function<void(std::ostream &, V)> value_print) {
         os << "[";
         for (int i = 0; i < M; ++i) {
             if (i < this->n_keys) {
-                os << (std::to_string(this->keys[i]) + std::string(":")) << records[i];
+                key_print(os, this->keys[i]);
+                os << ":";
+                value_print(os, this->records[i]);
             }
-            if (i < (M-2)) {
-                os << "|";
-            }
+            os << ((i < (M - 2)) ? "|" : "");
         }
         os << "]";
     }
 
-    void split(Node<KT> *&father, int i, int M, int m) override {
-        auto *partition = new leafNode<KT, KV>(M, true);
+    void split(node<K> *&father, int i, int M, int m) override {
+        auto *partition = new leaf_node<K, V>(M, true);
         partition->n_keys = m + ((M % 2) ? 0 : 1);
 
         partition->next_leaf = next_leaf;

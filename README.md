@@ -54,7 +54,7 @@ std::list<V> search_max();
 
 
 ```c++
-std::list<V> search_below(KT max, bool includeMax);
+std::list<V> search_below(KT max, bool include_max);
 ```
 - this method returns an ```std::list``` that contains the $k$ records which index attribute are lesser than the key value passed as parameter, this key is the ```max``` value and determines the superior limit of the search
 - this method is semantically equivalent to the sql query: ```SELECT * FROM T WHERE T.a < max```

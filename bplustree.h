@@ -156,9 +156,9 @@ public:
 
     std::list<V> search_max();
 
-    std::list<V> search_below(K max, bool include_max = true);
+    std::list<V> search_below(K max, bool include_max = false);
 
-    std::list<V> search_above(K min, bool include_min = true);
+    std::list<V> search_above(K min, bool include_min = false);
 
     std::list<V> search_between(K min, K max, bool include_min = true, bool include_max = true);
 };

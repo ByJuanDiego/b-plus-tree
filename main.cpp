@@ -10,10 +10,10 @@ struct transaction {
     int amount;
     int date; // unix timestamp date
 
-    explicit transaction(std::string e, std::string r, int date, int ammount) :
+    explicit transaction(std::string e, std::string r, int date, int amount) :
             emisor(std::move(e)),
             receptor(std::move(r)), date(date),
-            amount(ammount) {
+            amount(amount) {
     }
 
     [[nodiscard]] std::string to_string() const {
@@ -38,10 +38,10 @@ int main() {
 
     std::ifstream file("transactions.txt");
     std::string emisor, receptor;
-    int date, ammount;
+    int date, amount;
 
-    while (file >> emisor >> receptor >> ammount >> date) {
-        auto *t = new transaction(emisor, receptor, date, ammount);
+    while (file >> emisor >> receptor >> amount >> date) {
+        auto *t = new transaction(emisor, receptor, date, amount);
         bp.insert(t);
     }
 

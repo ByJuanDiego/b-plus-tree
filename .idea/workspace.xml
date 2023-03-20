@@ -20,9 +20,12 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f495e8a6-0c97-4bb9-a715-71c79268b461" name="Changes" comment="Update README.md">
+    <list default="true" id="f495e8a6-0c97-4bb9-a715-71c79268b461" name="Changes" comment="fix typo">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bplustree.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/bplustree.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/node.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/node.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -114,7 +117,7 @@
       <workItem from="1679262395077" duration="21848000" />
       <workItem from="1679300038730" duration="3403000" />
       <workItem from="1679324551679" duration="11203000" />
-      <workItem from="1679339315967" duration="1443000" />
+      <workItem from="1679339315967" duration="4608000" />
     </task>
     <task id="LOCAL-00001" summary="Update CMakeLists.txt">
       <created>1679023116411</created>
@@ -179,7 +182,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679335679942</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="fix typo">
+      <created>1679346402563</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1679346402563</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -203,6 +213,7 @@
     <MESSAGE value="Instructions to run the project" />
     <MESSAGE value="concept constraint added and update README.md" />
     <MESSAGE value="Update README.md" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update README.md" />
+    <MESSAGE value="fix typo" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix typo" />
   </component>
 </project>

@@ -94,3 +94,7 @@ for (const transaction *i: bp.search_between(10, 97, true, false)) {
 }
 ```
 This query returns all the ```transactions``` which ```amount``` value is between ```10 (inclusive)``` and ```97 (exclusive)``` in a non-decreasing order.
+
+# To be implemented
+- ```remove()``` member function
+- ```iterator``` class for B+

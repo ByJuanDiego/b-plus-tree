@@ -7,7 +7,6 @@
 
 #include <functional>
 #include <ostream>
-#include <vector>
 #include <string>
 
 template<typename Printable>
@@ -15,9 +14,9 @@ using PrintFunction = std::function<void(std::ostream &, Printable)>;
 
 template<typename K>
 struct node {
-    std::vector<K> keys;
+    K *keys;
     int num_keys;
-    std::vector<node<K> *> children;
+    node<K> **children;
     bool is_leaf;
 
     explicit node(int order, bool is_leaf = false);
@@ -42,7 +41,7 @@ struct internal_node : public node<K> {
 
 template<typename K, typename V>
 struct leaf_node : public node<K> {
-    std::vector<V> records;
+    V *records;
     leaf_node<K, V> *next_leaf;
     leaf_node<K, V> *prev_leaf;
 

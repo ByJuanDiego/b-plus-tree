@@ -6,24 +6,26 @@
 
 template<typename K>
 node<K>::node(int order, bool is_leaf) : num_keys(0), is_leaf(is_leaf) {
-    keys.resize(order, K());
-    children.resize(order + 1, nullptr);
+    keys = new K[order]{K()};
+    children = new node<K> *[order + 1]{nullptr};
 }
 
 template<typename K>
 node<K>::~node() {
-    keys.clear();
-    children.clear();
-}
+    delete[] keys;
+    delete[] children;
+};
 
 template<typename K>
 void node<K>::kill_self() {
-    for (int i = 0; i <= this->num_keys; ++i) {
-        if (this->children[i]) {
-            this->children[i]->kill_self();
-        }
+    if (is_leaf) {
+        delete this;
+        return;
     }
-    delete this;
+
+    for (int i = 0; i <= num_keys; ++i) {
+        children[i]->kill_self();
+    }
 }
 
 template<typename K>
@@ -65,12 +67,12 @@ leaf_node<K, V>::leaf_node(int order, bool is_leaf) :
         node<K>(order, is_leaf),
         next_leaf(nullptr),
         prev_leaf(nullptr) {
-    records.resize(order, V());
+    records = new V[order]{V()};
 }
 
 template<typename K, typename V>
 leaf_node<K, V>::~leaf_node() {
-    records.clear();
+    delete[] records;
 }
 
 template<typename K, typename V>

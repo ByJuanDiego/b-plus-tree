@@ -12,7 +12,7 @@
 #include "node.cpp"
 
 #ifndef MINIMUM_ORDER
-#define MINIMUM_ORDER 2
+#define MINIMUM_ORDER 3
 #endif
 
 template<typename Printable>

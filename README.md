@@ -26,7 +26,7 @@ template<
 int m; 
 int n; 
 int h;
-node<K> *root; // root ot the tree
+node<K> *root;
 Index index;
 Greater greater;
 ```

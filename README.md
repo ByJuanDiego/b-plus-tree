@@ -2,7 +2,17 @@
 
 ![BPlusTree](https://iq.opengenus.org/content/images/2018/06/b--search.jpg)
 
-## B+ Tree template type parameters
+## Run the project
+```
+git clone https://github.com/ByJuanDiego/b-plus-tree.git
+cd b-plus-tree
+cmake -B<build-dir-name> -H.
+cmake --build <build-dir-name> --target all
+./<build-dir-name>/bplus_tree
+```
+replace ```<build-dir-name>``` with the desire build directory name
+
+## Template type parameters
 ```c++
 template<
         int M, 
@@ -20,7 +30,7 @@ template<
 - ```Greater``` A boolean function that is ```true``` when a key is greater than another and ```false``` otherwise.
 - ```Index``` is a function type that recieves a record and returns the key to be used for indexing
 
-## B+ Tree member variables
+## Member variables
 
 ```c++
 int m; 
@@ -37,7 +47,7 @@ Greater greater;
 - ```root```: root node is a reference to the first level of the tree
 > each node is reached from the root
 
-## B+ Tree member functions
+## Member functions
 
 All the search operations are made on a $O(log_{M}(n) + k)$ time complexity, where $k$ is the cost of traversing the leaf nodes and could be different depending on the type of search, and the logarithmic cost belongs to the cost of descending in the tree
 

@@ -20,17 +20,9 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f495e8a6-0c97-4bb9-a715-71c79268b461" name="Changes" comment="Final">
-      <change afterPath="$PROJECT_DIR$/bplustree.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bplustree.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/node.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/node.hpp" afterDir="false" />
+    <list default="true" id="f495e8a6-0c97-4bb9-a715-71c79268b461" name="Changes" comment="Code split into files">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bplustree.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/node.h" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,6 +51,9 @@
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
   </component>
   <component name="ProjectApplicationVersion">
     <option name="ide" value="CLion" />
@@ -121,7 +116,7 @@
       <workItem from="1679188637942" duration="650000" />
       <workItem from="1679191924952" duration="9000" />
       <workItem from="1679259074912" duration="305000" />
-      <workItem from="1679262395077" duration="19705000" />
+      <workItem from="1679262395077" duration="21638000" />
     </task>
     <task id="LOCAL-00001" summary="Update CMakeLists.txt">
       <created>1679023116411</created>
@@ -151,7 +146,21 @@
       <option name="project" value="LOCAL" />
       <updated>1679259306806</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Code split into files">
+      <created>1679289900767</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1679289900767</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Code split into files">
+      <created>1679289965076</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1679289965076</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -171,6 +180,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Update CMakeLists.txt" />
     <MESSAGE value="Final" />
-    <option name="LAST_COMMIT_MESSAGE" value="Final" />
+    <MESSAGE value="Code split into files" />
+    <option name="LAST_COMMIT_MESSAGE" value="Code split into files" />
   </component>
 </project>

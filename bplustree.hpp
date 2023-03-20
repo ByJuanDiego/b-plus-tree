@@ -11,10 +11,23 @@
 
 #include "node.cpp"
 
+#ifndef MINIMUM_ORDER
+#define MINIMUM_ORDER 2
+#endif
+
 template<typename Printable>
 PrintFunction<Printable> display = [](std::ostream &os, const Printable &p) { os << p; };
 
-template<int M, typename K, typename V, typename Greater = std::greater<K>, typename Index = std::function<K(V)>>
+template<int M>
+concept OrderConstraint = M >= MINIMUM_ORDER;
+
+template<
+        int M,
+        typename K,
+        typename V,
+        typename Greater = std::greater<K>,
+        typename Index = std::function<K(V)>
+> requires OrderConstraint<M>
 class b_plus_tree {
 private:
 

@@ -12,7 +12,7 @@ cmake --build <build-dir-name> --target all
 ```
 replace ```<build-dir-name>``` with the desire build directory name
 
-## Template type parameters
+## Template parameters
 ```c++
 template<
         int M, 
@@ -20,15 +20,17 @@ template<
         typename V, 
         typename Greater, 
         typename Index
-> class b_plus_tree;
+> requires OrderConstraint<M>
+class b_plus_tree;
 ```
 
-- ```M```: integer that defines the degree of the tree
+- ```M```: integer that defines the order of the tree
 > in a B+Tree of order $M$ it is true that, for each node, at most it has $M$ children and $M-1$ keys
-- ```K```: key type of the tree, this defines the criterion for inserting, searching and deleting
-- ```V```: value type of the tree, this defines the record type to being accessed with the keys
+- ```K```: this defines the key type used for inserting, searching and deleting
+- ```V```: this type defines the record type to being accessed with the keys
 - ```Greater``` A boolean function that is ```true``` when a key is greater than another and ```false``` otherwise.
 - ```Index``` is a function type that recieves a record and returns the key to be used for indexing
+- ```OrderConstraint<M>``` is a [concept](https://www.educative.io/answers/how-to-use-the-requires-clause-with-concepts-in-cpp-classes) that constraints the ```M``` value to integers greater than 2
 
 ## Member variables
 
@@ -49,57 +51,25 @@ Greater greater;
 
 ## Member functions
 
-All the search operations are made on a $O(log_{M}(n) + k)$ time complexity, where $k$ is the cost of traversing the leaf nodes and could be different depending on the type of search, and the logarithmic cost belongs to the cost of descending in the tree
+|                                              Member Function                                              | Return Type |                                        Description                                        | Time Complexity |                                                                                        Notes                                                                                        |
+|:---------------------------------------------------------------------------------------------------------:|:-----------:|:-----------------------------------------------------------------------------------------:|:---------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+|                                               ```empty()```                                               | ```bool```  |              returns ```true``` if the tree is empty, ```false``` otherwhise              |     $O(1)$      |                                                                                          -                                                                                          |
+|                                               ```clear()```                                               | ```void```  |                  frees up the memory and allows to continue using the B+                  |     $O(1)$      |                                                                                          -                                                                                          |                                                                                 |
+|                                               ```size()```                                                |  ```int```  |                                   returns ```this->n```                                   |     $O(1)$      |                                                                              ```n=0``` for empty tree                                                                               |
+|                                              ```height()```                                               |  ```int```  |                                   returns ```this->h```                                   |     $O(1)$      |                                                                             ```h=-1```  for empty tree                                                                              |
+|                                           ```insert(V value)```                                           | ```void```  |                 insert a new record on a leaf node descending on the tree                 | $O(log_{M}(n))$ |                                                      occasionally splits one or more nodes recursively to increase the height                                                       |
+| ```print(std::ostream &os, PrintFunction<V> disp_v = display<V>, PrintFunction<K> disp_k = display<K>)``` | ```void```  | traverse all the tree using [BFS](https://es.wikipedia.org/wiki/B%C3%BAsqueda_en_anchura) |     $O(n)$      | if ```V``` is not a [built-in type](https://en.cppreference.com/w/cpp/language/types) ```disp_v``` will be necessary, same with ```K``` (commonly, the key type is a build-in type) |
 
-```c++
-std::list<V> search(K key);
-```
-- this method returns an ```std::list``` that contains the $k$ records which index attribute equals the ```key``` passed as parameter
-- this method is semantically equivalent to the sql query: ```SELECT * FROM T WHERE T.a = key;```
-- time complexity gets worse when having more records with the same ```key``` value
+All the search operations returns an ```std::list<V>``` and are made on a $O(log_{M}(n) + k)$ time complexity, where $k$ is the cost of traversing the leaf nodes and could be different depending on the type of search, and the logarithmic function belongs to the cost of descending in the tree
 
-
-```c++
-std::list<V> search_min();
-```
-- this method returns an ```std::list``` that contains the $k$ records which index attribute are ***minimum***
-- this method is semantically equivalent to the sql query: ```SELECT * FROM T WHERE T.a = min(T.a)```
-- time complexity gets worse when having many records with the minimum key value
-
-
-```c++
-std::list<V> search_max();
-```
-- this method returns an ```std::list``` that contains the $k$ records which index attribute are maxmimum
-- this method is semantically equivalent to the sql query: ```SELECT * FROM T WHERE T.a = max(T.a)```
-- time complexity gets worse when having many records with the maximum key value
-
-
-```c++
-std::list<V> search_below(KT max, bool include_max);
-```
-- this method returns an ```std::list``` that contains the $k$ records which index attribute are lesser than the key value passed as parameter, this key is the ```max``` value and determines the superior limit of the search
-- this method is semantically equivalent to the sql query: ```SELECT * FROM T WHERE T.a < max```
-- the search returned ***do not include*** the superior limit for default, to include it, set the optional parameter ```include_max``` as ```true```
-- time complexity gets worse when the ```max``` value gets closer to the maximum value in the tree
-
-
-```c++
-std::list<V> search_above(K min, bool include_min);
-```
-- this method returns an ```std::list``` that contains the $k$ records which index attribute are grater than the key passed as parameter, this key is the ```min``` value and determines the inferior limit of the search
-- this method is semantically equivalent to the sql query: ```SELECT * FROM T WHERE T.a > min;```
-- the search returned ***do not include*** the inferior limit for default, to include it, set the optional parameter ```include_min``` as ```true```
-- time complexity gets worse when the ```min``` value gets closer to the minimum value in the tree
-
-```c++
-std::list<V> search_between(K min, K max, bool include_min, bool include_max);
-```
-- this method returns an ```std::list``` that contains $k$ records which index attribute are between the ```min``` and ```max``` values passed as parameters
-- this method is semantically equivalent to the sql query: ```SELECT * FROM T WHERE min <= T.a <= max;```
-- the search returned ***includes*** both limits (inferior and superior) for default
-- to ***exclude*** one or both limits, set the ```include_min``` or ```include_max``` values to ```false``` depending on the desired semantic
-- time complexity gets worse when the difference between ```max``` and ```min``` is greater
+|                                                                              Member Function                                                                              |                                 Return Description                                 |                                                                                                       Optional Parameters                                                                                                       |
+|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+|                                                                            ```search(K key)```                                                                            |          contains the $k$ records which index attribute equals ```key```           |                                                                                                                -                                                                                                                |
+|                                                                            ```search_min()```                                                                             |          contains the $k$ records which index attribute are ***minimum***          |                                                                                                                -                                                                                                                |
+ |                                                                            ```search_max()```                                                                             |         contains the $k$ records which index attribute are ***maxmimum***          |                                                                                                                -                                                                                                                |                                                                                 |
+ |                                                                ```search_below(K max, bool include_max)```                                                                |      contains the $k$ records which index attribute are lesser than ```max```      |                                       the search returned ***do not include*** the superior limit for default, to include it, set the optional parameter ```include_max``` as ```true```                                        |
+|                                                                ```search_above(K min, bool include_min)```                                                                |      contains the $k$ records which index attribute are grater than ```min```      |                                       the search returned ***do not include*** the inferior limit for default, to include it, set the optional parameter ```include_min``` as ```true```                                        |
+|                                                  ```search_between(K min, K max, bool include_min, bool include_max)```                                                   | contains $k$ records which index attribute are between the ```min``` and ```max``` | the search returned ***includes*** both limits (inferior and superior) for default; to ***exclude*** one or both limits, set the ```include_min``` or ```include_max``` values to ```false``` depending on the desired semantic |
 
 # Usage Cases
 
@@ -115,7 +85,7 @@ b_plus_tree<5, int, transaction *, std::function<bool(int, int)>> bPlusTree(inde
  ```greater``` is a function that, trivially, returns if an indexing value is greater than another
  
 > - this last function do not need to be passed as parameter; in that case, the type is assigned to ```std::greater``` by default. If the indexing attribute is not a comparable type by default (which is not recomendable) a specialization of ```std::greater``` is necesary
-> - for more information about ```std::greater``` specialization, visit [cppreference/std::greater](https://en.cppreference.com/w/cpp/utility/functional/greater)
+> - for more information about ```std::greater``` specialization, visit [cppreference/greater](https://en.cppreference.com/w/cpp/utility/functional/greater)
 
 ## Querying
 ```c++

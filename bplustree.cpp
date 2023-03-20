@@ -5,6 +5,7 @@
 #include "bplustree.hpp"
 
 template<int M, typename K, typename V, typename Greater, typename Index>
+requires OrderConstraint<M>
 void b_plus_tree<M, K, V, Greater, Index>::non_full_insert(V value, node<K> *&node) {
     if (node->is_leaf) {
         auto *leaf = reinterpret_cast<leaf_node<K, V> *>(node);
@@ -34,6 +35,7 @@ void b_plus_tree<M, K, V, Greater, Index>::non_full_insert(V value, node<K> *&no
 }
 
 template<int M, typename K, typename V, typename Index, typename Greater>
+requires OrderConstraint<M>
 leaf_node<K, V> *b_plus_tree<M, K, V, Index, Greater>::search_node(node<K> *node, K key) {
     if (!node) {
         return nullptr;
@@ -48,12 +50,14 @@ leaf_node<K, V> *b_plus_tree<M, K, V, Index, Greater>::search_node(node<K> *node
 }
 
 template<int M, typename K, typename V, typename Greater, typename Index>
+requires OrderConstraint<M>
 b_plus_tree<M, K, V, Greater, Index>::b_plus_tree(Index index, Greater greater) :
         n(0), m(int(std::ceil(M / 2.0)) - 1),
         h(-1), root(nullptr), index{index}, greater{greater} {
 }
 
 template<int M, typename K, typename V, typename Greater, typename Index>
+requires OrderConstraint<M>
 b_plus_tree<M, K, V, Greater, Index>::~b_plus_tree() {
     if (!root) {
         return;
@@ -62,16 +66,19 @@ b_plus_tree<M, K, V, Greater, Index>::~b_plus_tree() {
 }
 
 template<int M, typename K, typename V, typename Greater, typename Index>
+requires OrderConstraint<M>
 int b_plus_tree<M, K, V, Greater, Index>::size() {
     return this->n;
 }
 
 template<int M, typename K, typename V, typename Greater, typename Index>
+requires OrderConstraint<M>
 bool b_plus_tree<M, K, V, Greater, Index>::empty() {
     return !this->root;
 }
 
 template<int M, typename K, typename V, typename Greater, typename Index>
+requires OrderConstraint<M>
 void b_plus_tree<M, K, V, Greater, Index>::clear() {
     if (!root) {
         return;
@@ -83,11 +90,13 @@ void b_plus_tree<M, K, V, Greater, Index>::clear() {
 }
 
 template<int M, typename K, typename V, typename Greater, typename Index>
+requires OrderConstraint<M>
 int b_plus_tree<M, K, V, Greater, Index>::height() {
     return this->h;
 }
 
 template<int M, typename K, typename V, typename Greater, typename Index>
+requires OrderConstraint<M>
 void b_plus_tree<M, K, V, Greater, Index>::insert(V value) {
     if (!root) {
         root = new leaf_node<K, V>(M, true);
@@ -107,6 +116,7 @@ void b_plus_tree<M, K, V, Greater, Index>::insert(V value) {
 }
 
 template<int M, typename K, typename V, typename Index, typename Greater>
+requires OrderConstraint<M>
 std::list<V> b_plus_tree<M, K, V, Index, Greater>::search(K key) {
     std::list<V> values;
     leaf_node<K, V> *leaf = search_node(root, key);
@@ -124,6 +134,7 @@ std::list<V> b_plus_tree<M, K, V, Index, Greater>::search(K key) {
 }
 
 template<int M, typename K, typename V, typename Index, typename Greater>
+requires OrderConstraint<M>
 std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_min() {
     std::list<V> values;
     if (this->empty())
@@ -148,6 +159,7 @@ std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_min() {
 }
 
 template<int M, typename K, typename V, typename Index, typename Greater>
+requires OrderConstraint<M>
 std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_max() {
     std::list<V> values;
     if (this->empty())
@@ -172,6 +184,7 @@ std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_max() {
 }
 
 template<int M, typename K, typename V, typename Index, typename Greater>
+requires OrderConstraint<M>
 std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_below(K max, bool include_max) {
     std::list<V> search;
     leaf_node<K, V> *leaf = search_node(root, max);
@@ -189,6 +202,7 @@ std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_below(K max, bool incl
 }
 
 template<int M, typename K, typename V, typename Index, typename Greater>
+requires OrderConstraint<M>
 std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_above(K min, bool include_min) {
     std::list<V> search;
     leaf_node<K, V> *leaf = search_node(root, min);
@@ -206,6 +220,7 @@ std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_above(K min, bool incl
 }
 
 template<int M, typename K, typename V, typename Index, typename Greater>
+requires OrderConstraint<M>
 std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_between(K min, K max, bool include_min, bool include_max) {
     std::list<V> search;
     leaf_node<K, V> *leaf = search_node(root, min);
@@ -229,6 +244,7 @@ std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_between(K min, K max, 
 }
 
 template<int M, typename K, typename V, typename Greater, typename Index>
+requires OrderConstraint<M>
 void b_plus_tree<M, K, V, Greater, Index>::print(std::ostream &os, PrintFunction<V> disp_v, PrintFunction<K> disp_k) {
     os <<
        "{" <<

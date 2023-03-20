@@ -21,7 +21,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f495e8a6-0c97-4bb9-a715-71c79268b461" name="Changes" comment="Final">
+      <change afterPath="$PROJECT_DIR$/bplustree.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bplustree.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/node.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/node.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bplustree.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node.h" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +78,7 @@
     "WebServerToolWindowFactoryState": "false",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "last_opened_file_path": "/home/juandiego/CLionProjects/data-structures/hash-table",
+    "last_opened_file_path": "/home/juandiego/CLionProjects/data-structures/b-plus-tree",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -85,6 +94,11 @@
     </key>
   </component>
   <component name="RunManager">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="bplus_tree" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="bplus_tree" TARGET_NAME="bplus_tree" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="bplus_tree" RUN_TARGET_NAME="bplus_tree">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -106,6 +120,8 @@
       <workItem from="1679171073810" duration="14339000" />
       <workItem from="1679188637942" duration="650000" />
       <workItem from="1679191924952" duration="9000" />
+      <workItem from="1679259074912" duration="305000" />
+      <workItem from="1679262395077" duration="19705000" />
     </task>
     <task id="LOCAL-00001" summary="Update CMakeLists.txt">
       <created>1679023116411</created>
@@ -128,7 +144,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679188746400</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Final">
+      <created>1679259306806</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1679259306806</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -149,16 +172,5 @@
     <MESSAGE value="Update CMakeLists.txt" />
     <MESSAGE value="Final" />
     <option name="LAST_COMMIT_MESSAGE" value="Final" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/node.h</url>
-          <line>121</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

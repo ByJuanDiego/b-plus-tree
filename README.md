@@ -4,30 +4,42 @@
 
 ## B+ Tree template type parameters
 ```c++
-template<typename K, typename V, typename Index = std::function<K(V)>, typename Greater = std::greater<K>>
-class b_plus_tree;
+template<
+        int M, 
+        typename K, 
+        typename V, 
+        typename Greater, 
+        typename Index
+> class b_plus_tree;
 ```
 
+- ```M```: integer that defines the degree of the tree
+> in a B+Tree of order $M$ it is true that, for each node, at most it has $M$ children and $M-1$ keys
 - ```K```: key type of the tree, this defines the criterion for inserting, searching and deleting
-- ```V```: value type of the tree, this defines the type of the records to being accessed with the keys
-- ```Index``` is a functor type that defines the type of function to be used for indexing
-- ```Greater``` is a functor type that defines a condition that is true when a key is greater than another.
+- ```V```: value type of the tree, this defines the record type to being accessed with the keys
+- ```Greater``` A boolean function that is ```true``` when a key is greater than another and ```false``` otherwise.
+- ```Index``` is a function type that recieves a record and returns the key to be used for indexing
 
-## B+ Tree (important) member variables
+## B+ Tree member variables
 
 ```c++
+int m; 
+int n; 
+int h;
+node<K> *root; // root ot the tree
 Index index;
-```
-- its a function that receives a record type and returns the attribute to be used for indexing the records
-
-```c++
 Greater greater;
 ```
-- this function recieves two keys and returns ```true``` if the first is greater than the second and ```false``` otherwise
+- ```m```: minimum number of keys per node
+> depends of the value of $M$, $m = \lceil \frac{M}{2} \rceil - 1$
+- ```n```: number of records stored at leaf nodes
+- ```h```: height of the tree
+- ```root```: root node is a reference to the first level of the tree
+> each node is reached from the root
 
 ## B+ Tree member functions
 
-All the search operations are made on a $O(log_{M}(n) + k)$ time complexity, where $k$ is the cost of traversing the leaf nodes and could be differente depending of the type of search, and the logarithmic cost belongs to the cost of descending in the tree
+All the search operations are made on a $O(log_{M}(n) + k)$ time complexity, where $k$ is the cost of traversing the leaf nodes and could be different depending on the type of search, and the logarithmic cost belongs to the cost of descending in the tree
 
 ```c++
 std::list<V> search(K key);
@@ -83,11 +95,9 @@ std::list<V> search_between(K min, K max, bool include_min, bool include_max);
 
 ## Inicialization
 ```c++
-int M = 3;
-std::function<int(transaction *)> index = [&](transaction *tx) -> int { return tx->ammount; };
-std::function<bool(int, int)> greater = [&](int a, int b)->bool {return a > b;};
-
-b_plus_tree<int, transaction *, decltype(greater)> bp(index, M, greater);
+std::function<int(transaction *)> index = [&](transaction *tx) -> int { return tx->amount; };
+std::function<bool(int, int)> greater = [&](int a, int b) -> bool {return a > b;};
+b_plus_tree<5, int, transaction *, std::function<bool(int, int)>> bPlusTree(index, greater);
 ```
 
  ```index``` function recieves a value and returns the attribute that will be used for indexing values
@@ -96,7 +106,7 @@ b_plus_tree<int, transaction *, decltype(greater)> bp(index, M, greater);
  
 > - this last function do not need to be passed as parameter; in that case, the type is assigned to ```std::greater``` by default. If the indexing attribute is not a comparable type by default (which is not recomendable) a specialization of ```std::greater``` is necesary
 > - for more information about ```std::greater``` specialization, visit [cppreference/std::greater](https://en.cppreference.com/w/cpp/utility/functional/greater)
- 
+
 ## Querying
 ```c++
 for (const transaction *i: bp.search_between(10, 97, true, false)) {

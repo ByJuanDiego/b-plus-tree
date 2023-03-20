@@ -1,18 +1,18 @@
 #include <iostream>
 #include <fstream>
 #include <utility>
-#include <sstream>
-#include "bplustree.h"
+#include <iomanip>
+
+#include "bplustree.cpp"
 
 struct transaction {
     std::string emisor;
     std::string receptor;
     int amount;
-    int date; // unix timestamp date
 
     explicit transaction(std::string e, std::string r, int date, int amount) :
             emisor(std::move(e)),
-            receptor(std::move(r)), date(date),
+            receptor(std::move(r)),
             amount(amount) {
     }
 
@@ -22,62 +22,61 @@ struct transaction {
         return ss.str();
     }
 
-    friend std::ostream &operator<<(std::ostream &os, const transaction &tx);
+    friend std::ostream &operator<<(std::ostream &os, const transaction &tx) {
+        os << "(" << tx.emisor << "," << tx.receptor << "," << tx.amount << ")";
+        return os;
+    }
 };
 
-std::ostream &operator<<(std::ostream &os, const transaction &tx) {
-    os << "(" << tx.emisor << "," << tx.receptor << "," << tx.amount << "," << tx.date << ")";
-    return os;
-}
-
 int main() {
-    int M = 3;
     std::function<int(transaction *)> index = [&](transaction *tx) -> int { return tx->amount; };
-    std::function<bool(int, int)> greater = [&](int a, int b)->bool {return a>b;};
-    b_plus_tree<int, transaction *, decltype(greater)> bp(index, M, greater);
+    std::function<bool(int, int)> greater = [&](int a, int b) -> bool { return a > b; };
+    b_plus_tree<5, int, transaction *, std::function<bool(int, int)>> bPlusTree(index, greater);
 
     std::ifstream file("transactions.txt");
     std::string emisor, receptor;
     int date, amount;
 
     while (file >> emisor >> receptor >> amount >> date) {
-        auto *t = new transaction(emisor, receptor, date, amount);
-        bp.insert(t);
+        bPlusTree.insert(new transaction(emisor, receptor, date, amount));
     }
 
-    for (const transaction *i: bp.search(2200)) {
+    for (const transaction *i: bPlusTree.search(2200)) {
         std::cout << i->to_string() << std::endl;
     }
     std::cout << std::endl;
 
-    for (const transaction *i: bp.search_min()) {
+    for (const transaction *i: bPlusTree.search_min()) {
         std::cout << i->to_string() << std::endl;
     }
     std::cout << std::endl;
 
-    for (const transaction *i: bp.search_max()) {
+    for (const transaction *i: bPlusTree.search_max()) {
         std::cout << i->to_string() << std::endl;
     }
     std::cout << std::endl;
 
-    for (const transaction *i: bp.search_below(50, false)) {
+    for (const transaction *i: bPlusTree.search_below(50, false)) {
         std::cout << *i << std::endl;
     }
     std::cout << std::endl;
 
-    for (const transaction *i: bp.search_above(1000, false)) {
+    for (const transaction *i: bPlusTree.search_above(1000, false)) {
         std::cout << i->to_string() << std::endl;
     }
     std::cout << std::endl;
 
-    for (const transaction *i: bp.search_between(10, 97, true, false)) {
+    for (const transaction *i: bPlusTree.search_between(10, 97, true, false)) {
         std::cout << i->to_string() << std::endl;
     }
     std::cout << std::endl;
 
     std::ofstream resultantTree("out.txt");
-    bp.print(resultantTree, [](std::ostream& os, transaction* tx){
-        os << *tx;
+    bPlusTree.print(resultantTree, [](std::ostream &os, transaction *tx) {
+        os << std::quoted(tx->to_string());
     });
+
+    bPlusTree.clear();
+    resultantTree.close();
     return 0;
 }

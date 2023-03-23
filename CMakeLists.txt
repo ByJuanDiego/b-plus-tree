@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
-project(bplus_tree)
+project(b_plus_tree)
 
 set(CMAKE_CXX_STANDARD 20)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/transactions.txt ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
-add_executable(bplus_tree main.cpp node.hpp bplustree.hpp bplustree.cpp node.cpp)
+add_executable(b_plus_tree main.cpp include/node.hpp include/bplustree.hpp src/bplustree.cpp src/node.cpp utils/include/transaction.hpp utils/src/transaction.cpp)

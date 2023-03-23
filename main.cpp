@@ -1,82 +1,67 @@
 #include <iostream>
 #include <fstream>
-#include <utility>
 #include <iomanip>
 
-#include "bplustree.cpp"
-
-struct transaction {
-    std::string emisor;
-    std::string receptor;
-    int amount;
-
-    explicit transaction(std::string e, std::string r, int date, int amount) :
-            emisor(std::move(e)),
-            receptor(std::move(r)),
-            amount(amount) {
-    }
-
-    [[nodiscard]] std::string to_string() const {
-        std::stringstream ss;
-        ss << *this;
-        return ss.str();
-    }
-
-    friend std::ostream &operator<<(std::ostream &os, const transaction &tx) {
-        os << "(" << tx.emisor << "," << tx.receptor << "," << tx.amount << ")";
-        return os;
-    }
-};
+#include "src/bplustree.cpp"
+#include "utils/include/transaction.hpp"
 
 int main() {
     std::function<int(transaction *)> index = [&](transaction *tx) -> int { return tx->amount; };
     std::function<bool(int, int)> greater = [&](int a, int b) -> bool { return a > b; };
-    b_plus_tree<5, int, transaction *, std::function<bool(int, int)>> bPlusTree(index, greater);
+    b_plus_tree<4, int, transaction *, std::function<bool(int, int)>> bPlusTree(index, greater);
+    std::list<transaction *> destructor;
 
-    std::ifstream file("transactions.txt");
+    std::ifstream file("./utils/assets/transactions.txt");
     std::string emisor, receptor;
-    int date, amount;
+    int amount;
 
-    while (file >> emisor >> receptor >> amount >> date) {
-        bPlusTree.insert(new transaction(emisor, receptor, date, amount));
+    int j = 1;
+    while (file >> emisor >> receptor >> amount) {
+        auto* tx = new transaction(emisor, receptor, amount);
+        bPlusTree.insert(tx);
+        destructor.push_back(tx);
+
+        std::ofstream resultantTree("./utils/out/transactions_tree_step_" + std::to_string(j++) + ".txt");
+        bPlusTree.print(resultantTree, [](std::ostream &os, transaction *tx) {
+            os << std::quoted(tx->to_string());
+        });
+        resultantTree.close();
     }
 
-    for (const transaction *i: bPlusTree.search(2200)) {
-        std::cout << i->to_string() << std::endl;
-    }
-    std::cout << std::endl;
+    std::cout << std::boolalpha << bPlusTree.find(2200) << std::endl << std::endl;
 
-    for (const transaction *i: bPlusTree.search_min()) {
-        std::cout << i->to_string() << std::endl;
-    }
-    std::cout << std::endl;
-
-    for (const transaction *i: bPlusTree.search_max()) {
-        std::cout << i->to_string() << std::endl;
-    }
-    std::cout << std::endl;
-
-    for (const transaction *i: bPlusTree.search_below(50, false)) {
-        std::cout << *i << std::endl;
+    for (const transaction *tx: bPlusTree.search(2200)) {
+        std::cout << tx->to_string() << std::endl;
     }
     std::cout << std::endl;
 
-    for (const transaction *i: bPlusTree.search_above(1000, false)) {
-        std::cout << i->to_string() << std::endl;
+    for (const transaction *tx: bPlusTree.search_min()) {
+        std::cout << tx->to_string() << std::endl;
     }
     std::cout << std::endl;
 
-    for (const transaction *i: bPlusTree.search_between(10, 97, true, false)) {
-        std::cout << i->to_string() << std::endl;
+    for (const transaction *tx: bPlusTree.search_max()) {
+        std::cout << tx->to_string() << std::endl;
     }
     std::cout << std::endl;
 
-    std::ofstream resultantTree("out.txt");
-    bPlusTree.print(resultantTree, [](std::ostream &os, transaction *tx) {
-        os << std::quoted(tx->to_string());
-    });
+    for (const transaction *tx: bPlusTree.search_below(50, false)) {
+        std::cout << *tx << std::endl;
+    }
+    std::cout << std::endl;
 
-    bPlusTree.clear();
-    resultantTree.close();
+    for (const transaction *tx: bPlusTree.search_above(1000, false)) {
+        std::cout << tx->to_string() << std::endl;
+    }
+    std::cout << std::endl;
+
+    for (const transaction *tx: bPlusTree.search_between(10, 97, true, false)) {
+        std::cout << tx->to_string() << std::endl;
+    }
+    std::cout << std::endl;
+    
+    for (transaction* tx : destructor) {
+        delete tx;
+    }
     return 0;
 }

@@ -20,7 +20,10 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f495e8a6-0c97-4bb9-a715-71c79268b461" name="Changes" comment="&lt;README.md&gt; added &quot;to-be-implemented&quot; list" />
+    <list default="true" id="f495e8a6-0c97-4bb9-a715-71c79268b461" name="Changes" comment="&lt;README.md&gt; added &quot;to-be-implemented&quot; list">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/node.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/node.cpp" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -90,9 +93,9 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="b_plus_tree" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="b_plus_tree" RUN_TARGET_NAME="bplus_tree" EXPLICIT_BUILD_TARGET_NAME="all">
@@ -126,6 +129,7 @@
       <workItem from="1679543359689" duration="39000" />
       <workItem from="1679590651192" duration="20400000" />
       <workItem from="1679615549277" duration="4000" />
+      <workItem from="1679620818714" duration="2357000" />
     </task>
     <task id="LOCAL-00001" summary="Update CMakeLists.txt">
       <created>1679023116411</created>
@@ -231,5 +235,16 @@
     <MESSAGE value="fix typo" />
     <MESSAGE value="&lt;README.md&gt; added &quot;to-be-implemented&quot; list" />
     <option name="LAST_COMMIT_MESSAGE" value="&lt;README.md&gt; added &quot;to-be-implemented&quot; list" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/include/node.hpp</url>
+          <line>78</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

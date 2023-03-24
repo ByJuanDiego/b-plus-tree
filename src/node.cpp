@@ -53,7 +53,7 @@ void node<K>::reallocate(node<K> *&father, node<K> *sibling, int i, int m) {
 
 template<typename K>
 void internal_node<K>::split(node<K> *&father, int i, int order, int m) {
-    auto * sibling = new internal_node<K>(order, false, (m + (order % 2 ? 0 : 1)));
+    auto *sibling = new internal_node<K>(order, false, (order / 2));
 
     for (int j = 0; j < sibling->num_keys; ++j)
         sibling->keys[j] = this->keys[j + m + 1];
@@ -61,8 +61,8 @@ void internal_node<K>::split(node<K> *&father, int i, int order, int m) {
     for (int j = 0; j < (sibling->num_keys + 1); ++j)
         sibling->children[j] = this->children[j + m + 1];
 
-    this->reallocate(father, sibling, i, m);
     this->num_keys = m;
+    this->reallocate(father, sibling, i, m);
 }
 
 //-----------------------------------------------------------------------------
@@ -85,8 +85,7 @@ void internal_node<K>::print(std::ostream &os, Print<K> print_key) {
 //-----------------------------------------------------------------------------
 
 template<typename K, typename V>
-leaf_node<K, V>::leaf_node(int order, bool is_leaf, int num_keys, leaf_node<K, V> *next_leaf,
-                           leaf_node<K, V> *prev_leaf) :
+leaf_node<K, V>::leaf_node(int order, bool is_leaf, int num_keys, leaf_node<K, V> *next_leaf, leaf_node<K, V> *prev_leaf) :
         node<K>(order, is_leaf, num_keys),
         next_leaf(next_leaf),
         prev_leaf(prev_leaf) {
@@ -115,8 +114,8 @@ void leaf_node<K, V>::split(node<K> *&father, int i, int order, int m) {
         sibling->records[j] = this->records[j + m + 1];
     }
 
-    this->reallocate(father, sibling, i, m);
     this->num_keys = m + 1;
+    this->reallocate(father, sibling, i, m);
 }
 
 //-----------------------------------------------------------------------------

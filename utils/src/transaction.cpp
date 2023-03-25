@@ -46,6 +46,7 @@ transaction &transaction::operator=(const transaction &tx) {
     this->emisor = tx.emisor;
     this->receptor = tx.receptor;
     this->amount = tx.amount;
+    return *this;
 }
 
 //-----------------------------------------------------------------------------

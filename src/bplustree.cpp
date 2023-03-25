@@ -134,7 +134,6 @@ bool b_plus_tree<M, K, V, Greater, Index>::find(K key) {
 template<int M, typename K, typename V, typename Greater, typename Index>
 requires OrderConstraint<M>
 void b_plus_tree<M, K, V, Greater, Index>::insert(V value) {
-    std::cout << &value << std::endl;
     if (!root) {
         root = new leaf_node<K, V>(M, true);
         ++this->h;
@@ -283,13 +282,13 @@ std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_between(K min, K max, 
     while (leaf) {
         for (int i = 0; i < leaf->num_keys; ++i) {
             if (stop_condition(leaf->keys[i]))
-                return std::move(search);
+	            return search;
             if (include_condition(leaf->keys[i]))
                 search.push_back(leaf->records[i]);
         }
         leaf = leaf->next_leaf;
     }
-    return std::move(search);
+    return search;
 }
 
 //-----------------------------------------------------------------------------

@@ -20,14 +20,12 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f495e8a6-0c97-4bb9-a715-71c79268b461" name="Changes" comment="&lt;updated&gt; node.cpp">
+    <list default="true" id="f495e8a6-0c97-4bb9-a715-71c79268b461" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/bplustree.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/include/bplustree.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run.zsh" beforeDir="false" afterPath="$PROJECT_DIR$/run.zsh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bplustree.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/bplustree.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/node.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/node.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/include/transaction.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/utils/include/transaction.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/src/transaction.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/utils/src/transaction.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -130,7 +128,8 @@
       <workItem from="1679590651192" duration="20400000" />
       <workItem from="1679615549277" duration="4000" />
       <workItem from="1679620818714" duration="6916000" />
-      <workItem from="1679698860908" duration="6396000" />
+      <workItem from="1679698860908" duration="6793000" />
+      <workItem from="1679714279110" duration="1000" />
     </task>
     <task id="LOCAL-00001" summary="Update CMakeLists.txt">
       <created>1679023116411</created>
@@ -216,7 +215,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679624823909</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="&lt;updated&gt; README.md &amp; transaction.hpp brief documentation">
+      <created>1679705502758</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1679705502758</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -243,17 +249,7 @@
     <MESSAGE value="fix typo" />
     <MESSAGE value="&lt;README.md&gt; added &quot;to-be-implemented&quot; list" />
     <MESSAGE value="&lt;updated&gt; node.cpp" />
-    <option name="LAST_COMMIT_MESSAGE" value="&lt;updated&gt; node.cpp" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/include/node.hpp</url>
-          <line>78</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="&lt;updated&gt; README.md &amp; transaction.hpp brief documentation" />
+    <option name="LAST_COMMIT_MESSAGE" value="&lt;updated&gt; README.md &amp; transaction.hpp brief documentation" />
   </component>
 </project>

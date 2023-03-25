@@ -47,7 +47,7 @@ int main() {
     std::cout << std::endl;
 
     for (const transaction *tx: bPlusTree.search_below(50, false)) {
-        std::cout << *tx << std::endl;
+        std::cout << tx->to_string() << std::endl;
     }
     std::cout << std::endl;
 

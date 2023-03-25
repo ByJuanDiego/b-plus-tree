@@ -27,9 +27,9 @@ All the search operations returns an ```std::list<V>``` and are made on a $O(log
 
 ## Initialization
 ```c++
-std::function<int(transaction *)> index = [&](transaction *tx) -> int { return tx->amount; };
-std::function<bool(int, int)> greater = [&](int a, int b) -> bool {return a > b;};
-b_plus_tree<5, int, transaction *, std::function<bool(int, int)>> bPlusTree(index, greater);
+auto index = [&](const transaction *tx) -> int { return tx->amount; };
+auto greater = [&](int a, int b) -> bool { return a > b; };
+b_plus_tree<4, int, transaction *, decltype(greater), decltype(index)> bPlusTree(index, greater);
 ```
 
  ```index``` function recieves a value and returns the attribute that will be used for indexing values
@@ -40,8 +40,10 @@ b_plus_tree<5, int, transaction *, std::function<bool(int, int)>> bPlusTree(inde
 
 ## Querying
 ```c++
-for (const transaction *i: bp.search_between(10, 97, true, false)) {
-    std::cout << i->to_string() << std::endl;
+int min {10}, max{97};
+bool include_min {true}, include_max {false};
+for (const transaction *tx: bPlusTree.search_between(min, max, include_min, include_max)) {
+    std::cout << tx->to_string() << std::endl;
 }
 ```
 This query returns all the ```transactions``` which ```amount``` value is between ```10 (inclusive)``` and ```97 (exclusive)``` in a non-decreasing order.

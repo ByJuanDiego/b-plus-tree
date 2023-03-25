@@ -57,9 +57,8 @@ leaf_node<K, V> *b_plus_tree<M, K, V, Index, Greater>::search_node(node<K> *node
 
 template<int M, typename K, typename V, typename Greater, typename Index>
 requires OrderConstraint<M>
-b_plus_tree<M, K, V, Greater, Index>::b_plus_tree(Index index, Greater greater) :
-        n(0), m(int(std::ceil(M / 2.0)) - 1),
-        h(-1), root(nullptr), index{index}, greater{greater} {
+b_plus_tree<M, K, V, Greater, Index>::b_plus_tree(Index index, Greater greater)
+        : n(0), m(int(std::ceil(M / 2.0)) - 1), h(-1), root(nullptr), index{index}, greater{greater} {
 }
 
 //-----------------------------------------------------------------------------
@@ -114,7 +113,8 @@ int b_plus_tree<M, K, V, Greater, Index>::height() {
 //-----------------------------------------------------------------------------
 
 template<int M, typename K, typename V, typename Greater, typename Index>
-requires OrderConstraint<M>bool b_plus_tree<M, K, V, Greater, Index>::find(K key) {
+requires OrderConstraint<M>
+bool b_plus_tree<M, K, V, Greater, Index>::find(K key) {
     leaf_node<K, V> *leaf = search_node(root, key);
     if (!leaf) {
         return false;
@@ -134,6 +134,7 @@ requires OrderConstraint<M>bool b_plus_tree<M, K, V, Greater, Index>::find(K key
 template<int M, typename K, typename V, typename Greater, typename Index>
 requires OrderConstraint<M>
 void b_plus_tree<M, K, V, Greater, Index>::insert(V value) {
+    std::cout << &value << std::endl;
     if (!root) {
         root = new leaf_node<K, V>(M, true);
         ++this->h;
@@ -282,13 +283,13 @@ std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_between(K min, K max, 
     while (leaf) {
         for (int i = 0; i < leaf->num_keys; ++i) {
             if (stop_condition(leaf->keys[i]))
-                return search;
+                return std::move(search);
             if (include_condition(leaf->keys[i]))
                 search.push_back(leaf->records[i]);
         }
         leaf = leaf->next_leaf;
     }
-    return search;
+    return std::move(search);
 }
 
 //-----------------------------------------------------------------------------

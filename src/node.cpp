@@ -18,7 +18,7 @@ template<typename K>
 node<K>::~node() {
     delete[] keys;
     delete[] children;
-};
+}
 
 //-----------------------------------------------------------------------------
 
@@ -89,7 +89,7 @@ leaf_node<K, V>::leaf_node(int order, bool is_leaf, int num_keys, leaf_node<K, V
         node<K>(order, is_leaf, num_keys),
         next_leaf(next_leaf),
         prev_leaf(prev_leaf) {
-    records = new V[order]{V()};
+    records = new V[order];
 }
 
 //-----------------------------------------------------------------------------

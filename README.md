@@ -1,7 +1,7 @@
 # B+ Tree C++ implementation
 
 <p align="center">
-<img alt="BPlusTree" height="370" src="./assets/images/bplustree.png" width="640"/>
+<img alt="BPlusTree" height="213" src="./assets/images/bplustree.png" width="370"/>
 </p>
 
 ## Run the project

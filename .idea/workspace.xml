@@ -20,8 +20,9 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f495e8a6-0c97-4bb9-a715-71c79268b461" name="Changes" comment="&lt;fix&gt;">
+    <list default="true" id="f495e8a6-0c97-4bb9-a715-71c79268b461" name="Changes" comment="&lt;docs&gt;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,19 +85,14 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/assets/images" />
       <recent name="$PROJECT_DIR$/indexes" />
       <recent name="$PROJECT_DIR$/assets" />
       <recent name="$PROJECT_DIR$/indexes/src" />
       <recent name="$PROJECT_DIR$/indexes/include" />
-      <recent name="$PROJECT_DIR$/utils" />
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="b_plus_tree" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="b_plus_tree" RUN_TARGET_NAME="b_plus_tree" EXPLICIT_BUILD_TARGET_NAME="all">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -132,7 +128,9 @@
       <workItem from="1679698860908" duration="6793000" />
       <workItem from="1679714279110" duration="344000" />
       <workItem from="1679714752678" duration="74000" />
-      <workItem from="1679718053600" duration="1000" />
+      <workItem from="1679718053600" duration="215000" />
+      <workItem from="1679760961046" duration="145000" />
+      <workItem from="1679761124712" duration="123000" />
     </task>
     <task id="LOCAL-00001" summary="Update CMakeLists.txt">
       <created>1679023116411</created>
@@ -239,7 +237,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679714786793</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="&lt;docs&gt;">
+      <created>1679718156829</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1679718156829</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -269,6 +274,7 @@
     <MESSAGE value="&lt;updated&gt; README.md &amp; transaction.hpp brief documentation" />
     <MESSAGE value="&lt;quick refactor&gt;" />
     <MESSAGE value="&lt;fix&gt;" />
-    <option name="LAST_COMMIT_MESSAGE" value="&lt;fix&gt;" />
+    <MESSAGE value="&lt;docs&gt;" />
+    <option name="LAST_COMMIT_MESSAGE" value="&lt;docs&gt;" />
   </component>
 </project>

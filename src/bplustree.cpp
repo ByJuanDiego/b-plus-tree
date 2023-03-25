@@ -2,7 +2,7 @@
 // Created by juandiego on 3/19/23.
 //
 
-#include "../include/bplustree.hpp"
+#include "bplustree.hpp"
 
 //-----------------------------------------------------------------------------
 
@@ -229,11 +229,11 @@ std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_max() {
 
 template<int M, typename K, typename V, typename Index, typename Greater>
 requires OrderConstraint<M>
-std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_below(K max, bool include_max) {
+std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_below(K upper_bound, bool include_max) {
     std::list<V> search;
-    leaf_node<K, V> *leaf = search_node(root, max);
+    leaf_node<K, V> *leaf = search_node(root, upper_bound);
     auto include_condition = ([&](K key) {
-        return include_max ? (!greater(key, max)) : (greater(max, key));
+        return include_max ? (!greater(key, upper_bound)) : (greater(upper_bound, key));
     });
 
     while (leaf) {
@@ -249,11 +249,11 @@ std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_below(K max, bool incl
 
 template<int M, typename K, typename V, typename Index, typename Greater>
 requires OrderConstraint<M>
-std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_above(K min, bool include_min) {
+std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_above(K lower_bound, bool include_min) {
     std::list<V> search;
-    leaf_node<K, V> *leaf = search_node(root, min);
+    leaf_node<K, V> *leaf = search_node(root, lower_bound);
     auto include_condition = ([&](K key) {
-        return include_min ? (!greater(min, key)) : (greater(key, min));
+        return include_min ? (!greater(lower_bound, key)) : (greater(key, lower_bound));
     });
 
     while (leaf) {
@@ -269,14 +269,14 @@ std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_above(K min, bool incl
 
 template<int M, typename K, typename V, typename Index, typename Greater>
 requires OrderConstraint<M>
-std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_between(K min, K max, bool include_min, bool include_max) {
+std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_between(K lower_bound, K upper_bound, bool include_min, bool include_max) {
     std::list<V> search;
-    leaf_node<K, V> *leaf = search_node(root, min);
+    leaf_node<K, V> *leaf = search_node(root, lower_bound);
     auto stop_condition = ([&](K key) -> bool {
-        return include_max ? (greater(key, max)) : (!greater(max, key));
+        return include_max ? (greater(key, upper_bound)) : (!greater(upper_bound, key));
     });
     auto include_condition = ([&](K key) -> bool {
-        return include_min ? (!greater(min, key)) : (greater(key, min));
+        return include_min ? (!greater(lower_bound, key)) : (greater(key, lower_bound));
     });
 
     while (leaf) {

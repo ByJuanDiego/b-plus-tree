@@ -9,7 +9,7 @@
 #include <queue>
 #include <list>
 
-#include "../src/node.cpp"
+#include "node.cpp"
 
 #ifndef MINIMUM_ORDER
 #define MINIMUM_ORDER 3
@@ -112,14 +112,14 @@ public:
     /// Returns the records which index attribute are maxmimum
     std::list<V> search_max();
 
-    /// Returns the records which index attribute are lesser than `max`
-    std::list<V> search_below(K max, bool include_max = false);
+    /// Returns the records which index attribute are lesser than `upper_bound`
+    std::list<V> search_below(K upper_bound, bool include_max = false);
 
-    /// Returns the records which index attribute are greater than `min`
-    std::list<V> search_above(K min, bool include_min = false);
+    /// Returns the records which index attribute are greater than `lower_bound`
+    std::list<V> search_above(K lower_bound, bool include_min = false);
 
-    /// Returns the records which index attribute are between `min` and `max`
-    std::list<V> search_between(K min, K max, bool include_min = true, bool include_max = true);
+    /// Returns the records which index attribute are between `lower_bound` and `upper_bound`
+    std::list<V> search_between(K lower_bound, K upper_bound, bool include_min = true, bool include_max = true);
 
     /**
      * Prints all the B+ Tree

@@ -21,11 +21,11 @@ All the search operations returns an ```std::list<V>``` and are made on a $O(log
 is the cost of traversing the leaf nodes and could be different depending on the type of search, and the logarithmic
 function belongs to the cost of descending in the tree.
 
-|                            Member Function                             |                                                                                                       Optional Parameters                                                                                                       |
-|:----------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-|              ```search_below(K max, bool include_max)```               |                                       the search returned ***do not include*** the superior limit for default, to include it, set the optional parameter ```include_max``` as ```true```                                        |
-|              ```search_above(K min, bool include_min)```               |                                       the search returned ***do not include*** the inferior limit for default, to include it, set the optional parameter ```include_min``` as ```true```                                        |
-| ```search_between(K min, K max, bool include_min, bool include_max)``` | the search returned ***includes*** both limits (inferior and superior) for default; to ***exclude*** one or both limits, set the ```include_min``` or ```include_max``` values to ```false``` depending on the desired semantic |
+|                                    Member Function                                     |                                                                                                       Optional Parameters                                                                                                       |
+|:--------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+|                  ```search_below(K upper_bound, bool include_max)```                   |                                       the search returned ***do not include*** the superior limit for default, to include it, set the optional parameter ```include_max``` as ```true```                                        |
+|                  ```search_above(K lower_bound, bool include_min)```                   |                                       the search returned ***do not include*** the inferior limit for default, to include it, set the optional parameter ```include_min``` as ```true```                                        |
+| ```search_between(K lower_bound, K upper_bound, bool include_min, bool include_max)``` | the search returned ***includes*** both limits (inferior and superior) for default; to ***exclude*** one or both limits, set the ```include_min``` or ```include_max``` values to ```false``` depending on the desired semantic |
 
 # Usage Cases
 
@@ -48,8 +48,8 @@ b_plus_tree<4, int, transaction *, decltype(greater), decltype(index)> bPlusTree
 ## Querying
 
 ```c++
-int min {10}, max{97};
-bool include_min {true}, include_max {false};
+int min{10}, max{97};
+bool include_min{true}, include_max{false};
 for (const transaction *tx: bPlusTree.search_between(min, max, include_min, include_max)) {
     std::cout << tx->to_string() << std::endl;
 }

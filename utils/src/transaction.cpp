@@ -2,7 +2,7 @@
 // Created by juandiego on 3/22/23.
 //
 
-#include "../include/transaction.hpp"
+#include "transaction.hpp"
 
 //-----------------------------------------------------------------------------
 

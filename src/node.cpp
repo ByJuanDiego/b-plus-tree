@@ -2,7 +2,7 @@
 // Created by juandiego on 3/19/23.
 //
 
-#include "../include/node.hpp"
+#include "node.hpp"
 
 //-----------------------------------------------------------------------------
 

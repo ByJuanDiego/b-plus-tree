@@ -2,8 +2,8 @@
 #include <fstream>
 #include <iomanip>
 
-#include "src/bplustree.cpp"
-#include "utils/include/transaction.hpp"
+#include "bplustree.cpp"
+#include "transaction.hpp"
 
 int main() {
     auto index = [&](const transaction *tx) -> int { return tx->amount; };

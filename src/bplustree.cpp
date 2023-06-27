@@ -38,6 +38,62 @@ void b_plus_tree<M, K, V, Greater, Index>::non_full_insert(V value, node<K> *&no
 
 //-----------------------------------------------------------------------------
 
+template<int M, typename K, typename V, typename Greater, typename Index>
+requires OrderConstraint<M>
+RemoveFlag b_plus_tree<M, K, V, Greater, Index>::remove(K key, node<K> *&node, RemoveCase &remove_case) {
+    if (node->is_leaf) {
+        auto *leaf = reinterpret_cast<leaf_node<K, V> *>(node);
+        int searcher = leaf->search_key(key, greater);
+
+        if (searcher == -1) {
+            return BadKey;
+        }
+
+        leaf->remove_key(searcher);
+        return RemovedFromLeaf;
+    }
+
+    ::node<K> *&father = node;
+    int j = 0;
+    for (; j < father->num_keys && greater(key, father->keys[j]); ++j);
+
+    if ((j < father->keys) && !greater(father->keys[j], key)) {
+        remove_case = KeyPresentAtIndex;
+    }
+    ::node<K> *&child = father->children[j];
+
+    RemoveFlag flag = remove(key, child);
+    if (flag == BadKey) {
+        return BadKey;
+    }
+
+    switch (remove_case) {
+        case KeyNotPresentAtIndex: {
+            if (child->num_keys >= m) {
+                break;
+            }
+
+            ::node<K> (*left), (*right) = nullptr;
+
+            if (father->has_left_sibling(j, left) && left->num_keys > m) {
+
+            } else if (father->has_right_sibling(j, right) && right->num_keys > m) {
+
+            } else {
+
+            }
+
+            break;
+        }
+        case KeyPresentAtIndex: {
+
+            break;
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------
+
 template<int M, typename K, typename V, typename Index, typename Greater>
 requires OrderConstraint<M>
 leaf_node<K, V> *b_plus_tree<M, K, V, Index, Greater>::search_node(node<K> *node, K key) {
@@ -149,6 +205,18 @@ void b_plus_tree<M, K, V, Greater, Index>::insert(V value) {
         ++this->h;
     }
     ++this->n;
+}
+
+//-----------------------------------------------------------------------------
+
+template<int M, typename K, typename V, typename Greater, typename Index>
+requires OrderConstraint<M>void b_plus_tree<M, K, V, Greater, Index>::remove(K key) {
+    if (this->empty()) {
+        return;
+    }
+
+    RemoveCase remove_case = KeyNotPresentAtIndex;
+    remove_not_empty(key, root, remove_case);
 }
 
 //-----------------------------------------------------------------------------
@@ -269,7 +337,8 @@ std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_above(K lower_bound, b
 
 template<int M, typename K, typename V, typename Index, typename Greater>
 requires OrderConstraint<M>
-std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_between(K lower_bound, K upper_bound, bool include_min, bool include_max) {
+std::list<V>
+b_plus_tree<M, K, V, Index, Greater>::search_between(K lower_bound, K upper_bound, bool include_min, bool include_max) {
     std::list<V> search;
     leaf_node<K, V> *leaf = search_node(root, lower_bound);
     auto stop_condition = ([&](K key) -> bool {
@@ -282,7 +351,7 @@ std::list<V> b_plus_tree<M, K, V, Index, Greater>::search_between(K lower_bound,
     while (leaf) {
         for (int i = 0; i < leaf->num_keys; ++i) {
             if (stop_condition(leaf->keys[i]))
-	            return search;
+                return search;
             if (include_condition(leaf->keys[i]))
                 search.push_back(leaf->records[i]);
         }

@@ -52,6 +52,28 @@ void node<K>::reallocate(node<K> *&father, node<K> *sibling, int i, int m) {
 //-----------------------------------------------------------------------------
 
 template<typename K>
+bool node<K>::has_left_children(int j, node<K> *&left) {
+    bool flag = j > 0;
+    if (flag) {
+        left = this->children[j - 1];
+    }
+    return flag;
+}
+
+//-----------------------------------------------------------------------------
+
+template<typename K>
+bool node<K>::has_right_children(int j, node<K> *&right) {
+    bool flag = j < this->num_keys;
+    if (flag) {
+        right = this->children[j + 1];
+    }
+    return flag;
+}
+
+//-----------------------------------------------------------------------------
+
+template<typename K>
 void internal_node<K>::split(node<K> *&father, int i, int order, int m) {
     auto *sibling = new internal_node<K>(order, false, (order / 2));
 
@@ -85,7 +107,8 @@ void internal_node<K>::print(std::ostream &os, Print<K> print_key) {
 //-----------------------------------------------------------------------------
 
 template<typename K, typename V>
-leaf_node<K, V>::leaf_node(int order, bool is_leaf, int num_keys, leaf_node<K, V> *next_leaf, leaf_node<K, V> *prev_leaf) :
+leaf_node<K, V>::leaf_node(int order, bool is_leaf, int num_keys, leaf_node<K, V> *next_leaf,
+                           leaf_node<K, V> *prev_leaf) :
         node<K>(order, is_leaf, num_keys),
         next_leaf(next_leaf),
         prev_leaf(prev_leaf) {
@@ -132,6 +155,30 @@ void leaf_node<K, V>::print(std::ostream &os, Print<K> print_key, Print<V> print
         os << ((i < (this->num_keys - 1)) ? "|" : "");
     }
     os << "]";
+}
+
+//-----------------------------------------------------------------------------
+
+template<typename K, typename V>
+int leaf_node<K, V>::locate_key(K key, auto greater) {
+    int index = 0;
+    for (; (index < this->num_keys) && greater(key, this->keys[index]); ++index);
+
+    if (index == this->num_keys || this->keys[index] != key) {
+        return -1;
+    }
+    return index;
+}
+
+//-----------------------------------------------------------------------------
+
+template<typename K, typename V>
+void leaf_node<K, V>::remove_key(K key, int index) {
+    for (int i = index; i < (this->num_keys - 1); ++i) {
+        this->keys[i] = this->keys[i + 1];
+        this->records[i] = this->records[i + 1];
+    }
+    --this->num_keys;
 }
 
 //-----------------------------------------------------------------------------

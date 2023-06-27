@@ -19,6 +19,13 @@
 template<typename Printable>
 Print<Printable> print = [](std::ostream &os, const Printable &p) { os << p; };
 
+enum RemoveFlag {
+    RemovedFromLeaf, BadKey
+};
+enum RemoveCase {
+    KeyNotPresentAtIndex, KeyPresentAtIndex
+};
+
 /// Constraint to limit the values of M to integers greater than 2 before runtime
 template<int M>
 concept OrderConstraint = M >= MINIMUM_ORDER;
@@ -64,6 +71,8 @@ private:
      */
     void non_full_insert(V value, node<K> *&node);
 
+    RemoveFlag remove(K key, node<K> *& node, RemoveCase& remove_case);
+
     /** Iterative function that returns the first leaf node that stores key equal to `key`
      *
      * If the B+ is empty, returns nullptr
@@ -102,6 +111,9 @@ public:
      * When the `root` node is splited, `h` increases in 1
      */
     void insert(V value);
+
+    /// Removes a record
+    void remove(K key);
 
     /// Returns the records which index attribute equals `key`
     std::list<V> search(K key);

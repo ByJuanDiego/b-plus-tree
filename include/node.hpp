@@ -40,6 +40,9 @@ struct node {
     /// Reallocates the @param father pointers and keys after the current node is splitted
     void reallocate(node<K> *& father, node<K> *sibling, int i, int m);
 
+    bool has_left_children(int j, node<K>*& left);
+
+    bool has_right_children(int j, node<K> *& right);
 };
 
 template<typename K>
@@ -87,6 +90,9 @@ struct leaf_node : public node<K> {
     /// Splits a leaf node into two nodes and reallocates the father references
     void split(node<K> *&father, int i, int order, int m) override;
 
+    int locate_key(K key, auto greater);
+    
+    void remove_key(K key, int index);
 };
 
 

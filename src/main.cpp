@@ -28,6 +28,11 @@ int main() {
         resultantTree.close();
     }
 
+    bPlusTree.print(std::cout, [](std::ostream &os, const transaction *tx) {
+            os << std::quoted(tx->to_string());
+    });
+
+
     int key{2200};
     if (bPlusTree.find(key)) {
         for (const transaction *tx: bPlusTree.search(key)) {

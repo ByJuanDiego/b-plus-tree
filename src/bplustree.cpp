@@ -71,18 +71,14 @@ K *b_plus_tree<M, K, V, Greater, Index>::remove(K key, node<K> *&node) {
                 V record_to_transfer = left_leaf->pop_back();
                 leaf->push_front(record_to_transfer, index);
                 father->keys[j - 1] = *left_leaf->max_key();
+            } else {
+                auto *internal = reinterpret_cast<internal_node<K> *>(child);
+                auto *left_internal = reinterpret_cast<internal_node<K> *>(left);
 
-                return predecessor;
+                std::pair<K, ::node<K> *> to_transfer = left_internal->pop_back();
+                internal->push_front(to_transfer.first, to_transfer.second);
+                father->keys[j - 1] = left_internal->keys[left_internal->num_keys];
             }
-
-            auto *internal = reinterpret_cast<internal_node<K> *>(child);
-            auto *left_internal = reinterpret_cast<internal_node<K> *>(left);
-
-            std::pair<K, ::node<K> *> to_transfer = left_internal->pop_back();
-            internal->push_front(to_transfer.second);
-            father->keys[j - 1] = to_transfer.first;
-
-            return predecessor;
         } else if (father->has_right_sibling(j, right) && right->num_keys > m) {
             if (child->is_leaf) {
 
@@ -90,16 +86,17 @@ K *b_plus_tree<M, K, V, Greater, Index>::remove(K key, node<K> *&node) {
 
             }
         } else {
-
+            // merge
         }
-    } else if (child->num_keys >= m) {
-        if (j < father->num_keys && equals(key, father->keys[j])) {
-            father->keys[j] = *predecessor;
-            delete predecessor;
-            return nullptr;
-        }
-        return predecessor;
     }
+
+    if (predecessor && j < father->num_keys && equals(key, father->keys[j])) {
+        father->keys[j] = *predecessor;
+        delete predecessor;
+        return nullptr;
+    }
+
+    return predecessor;
 }
 
 //-----------------------------------------------------------------------------

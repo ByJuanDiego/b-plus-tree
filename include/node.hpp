@@ -68,7 +68,7 @@ struct internal_node : public node<K> {
 
     std::pair<K, ::node<K> *> pop_back();
 
-    void push_front(node<K>* children);
+    void push_front(K key, node<K> *children);
 
     void push_back(K key);
 };

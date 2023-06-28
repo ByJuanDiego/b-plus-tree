@@ -219,8 +219,13 @@ V leaf_node<K, V>::pop_back() {
 
 template<typename K>
 std::pair<K, ::node<K> *> internal_node<K>::pop_back() {
-    K key = this->keys[this->num_keys - 1];
     ::node<K> *child = this->children[this->num_keys];
+
+    node<K> *node = child;
+    while (!node->is_leaf)
+        node = node->children[node->num_keys];
+    K key = node->keys[node->num_keys - 1];
+
     this->num_keys--;
     return {key, child};
 }
@@ -228,7 +233,7 @@ std::pair<K, ::node<K> *> internal_node<K>::pop_back() {
 //-----------------------------------------------------------------------------
 
 template<typename K>
-void internal_node<K>::push_front(node<K> *children) {
+void internal_node<K>::push_front(K key, node<K> *children) {
     for (int i = this->num_keys; i > 0; --i) {
         this->keys[i] = this->keys[i - 1];
     }
@@ -237,6 +242,6 @@ void internal_node<K>::push_front(node<K> *children) {
         this->children[i] = this->children[i - 1];
     }
 
-    this->keys[0] = *children->max_key();
+    this->keys[0] = key;
     this->children[0] = children;
 }

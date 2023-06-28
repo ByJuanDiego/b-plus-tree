@@ -111,6 +111,16 @@ struct leaf_node : public node<K> {
     void push_front(V value, auto index);
 
     void push_back(K key, V value);
+
+    K* predecessor(int i) {
+        if (i > 0) {
+            return &this->keys[i - 1];
+        }
+        else if (this->prev_leaf) {
+            return this->prev_leaf->max_key();
+        }
+        return nullptr;
+    }
 };
 
 

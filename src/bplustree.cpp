@@ -49,9 +49,9 @@ K *b_plus_tree<M, K, V, Greater, Index>::remove(K key, node<K> *&node) {
             return nullptr;
         }
 
+        K *predecessor = leaf->predecessor(searcher);
         leaf->remove_key(searcher);
-        K *max_key = leaf->max_key();
-        return max_key;
+        return predecessor;
     }
 
     ::node<K> *&father = node;
@@ -72,7 +72,6 @@ K *b_plus_tree<M, K, V, Greater, Index>::remove(K key, node<K> *&node) {
                 leaf->push_front(record_to_transfer, index);
                 father->keys[j - 1] = *left_leaf->max_key();
 
-                predecessor = leaf->max_key();
                 return predecessor;
             }
 
@@ -83,6 +82,7 @@ K *b_plus_tree<M, K, V, Greater, Index>::remove(K key, node<K> *&node) {
             internal->push_front(to_transfer.second);
             father->keys[j - 1] = to_transfer.first;
 
+            return predecessor;
         } else if (father->has_right_sibling(j, right) && right->num_keys > m) {
             if (child->is_leaf) {
 

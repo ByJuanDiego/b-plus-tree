@@ -182,3 +182,61 @@ void leaf_node<K, V>::remove_key(K key, int index) {
 }
 
 //-----------------------------------------------------------------------------
+
+template<typename K>
+K *node<K>::max_key() {
+    return (this->num_keys > 0) ? &this->keys[this->num_keys - 1] : nullptr;
+}
+
+//-----------------------------------------------------------------------------
+
+template<typename K>
+K *node<K>::min_key() {
+    return (this->num_keys > 0) ? &this->keys[0] : nullptr;;
+}
+
+//-----------------------------------------------------------------------------
+
+template<typename K, typename V>
+void leaf_node<K, V>::push_front(V value, auto index) {
+    for (int i = (this->num_keys - 1); i > 0; --i) {
+        this->keys[i] = this->keys[i - 1];
+        this->records[i] = this->records[i - 1];
+    }
+
+    this->records[0] = value;
+    this->keys[0] = index(value);
+}
+
+//-----------------------------------------------------------------------------
+
+template<typename K, typename V>
+V leaf_node<K, V>::pop_back() {
+    return this->records[--this->num_keys];
+}
+
+//-----------------------------------------------------------------------------
+
+template<typename K>
+std::pair<K, ::node<K> *> internal_node<K>::pop_back() {
+    K key = this->keys[this->num_keys - 1];
+    ::node<K> *child = this->children[this->num_keys];
+    this->num_keys--;
+    return {key, child};
+}
+
+//-----------------------------------------------------------------------------
+
+template<typename K>
+void internal_node<K>::push_front(node<K> *children) {
+    for (int i = this->num_keys; i > 0; --i) {
+        this->keys[i] = this->keys[i - 1];
+    }
+
+    for (int i = (this->num_keys + 1); i > 0; --i) {
+        this->children[i] = this->children[i - 1];
+    }
+
+    this->keys[0] = *children->max_key();
+    this->children[0] = children;
+}

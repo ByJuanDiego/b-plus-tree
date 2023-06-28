@@ -40,55 +40,65 @@ void b_plus_tree<M, K, V, Greater, Index>::non_full_insert(V value, node<K> *&no
 
 template<int M, typename K, typename V, typename Greater, typename Index>
 requires OrderConstraint<M>
-RemoveFlag b_plus_tree<M, K, V, Greater, Index>::remove(K key, node<K> *&node, RemoveCase &remove_case) {
+K *b_plus_tree<M, K, V, Greater, Index>::remove(K key, node<K> *&node) {
     if (node->is_leaf) {
         auto *leaf = reinterpret_cast<leaf_node<K, V> *>(node);
         int searcher = leaf->search_key(key, greater);
 
         if (searcher == -1) {
-            return BadKey;
+            return nullptr;
         }
 
         leaf->remove_key(searcher);
-        return RemovedFromLeaf;
+        K *max_key = leaf->max_key();
+        return max_key;
     }
 
     ::node<K> *&father = node;
     int j = 0;
     for (; j < father->num_keys && greater(key, father->keys[j]); ++j);
 
-    if ((j < father->keys) && !greater(father->keys[j], key)) {
-        remove_case = KeyPresentAtIndex;
-    }
     ::node<K> *&child = father->children[j];
+    K *predecessor = remove(key, child);
 
-    RemoveFlag flag = remove(key, child);
-    if (flag == BadKey) {
-        return BadKey;
-    }
+    if (child->num_keys < m) {
+        ::node<K> (*left), (*right) = nullptr;
+        if (father->has_left_sibling(j, left) && left->num_keys > m) {
+            if (child->is_leaf) {
+                auto *leaf = reinterpret_cast<leaf_node<K, V> *>(child);
+                auto *left_leaf = reinterpret_cast<leaf_node<K, V> *>(left);
 
-    switch (remove_case) {
-        case KeyNotPresentAtIndex: {
-            if (child->num_keys >= m) {
-                break;
+                V record_to_transfer = left_leaf->pop_back();
+                leaf->push_front(record_to_transfer, index);
+                father->keys[j - 1] = *left_leaf->max_key();
+
+                predecessor = leaf->max_key();
+                return predecessor;
             }
 
-            ::node<K> (*left), (*right) = nullptr;
+            auto *internal = reinterpret_cast<internal_node<K> *>(child);
+            auto *left_internal = reinterpret_cast<internal_node<K> *>(left);
 
-            if (father->has_left_sibling(j, left) && left->num_keys > m) {
+            std::pair<K, ::node<K> *> to_transfer = left_internal->pop_back();
+            internal->push_front(to_transfer.second);
+            father->keys[j - 1] = to_transfer.first;
 
-            } else if (father->has_right_sibling(j, right) && right->num_keys > m) {
+        } else if (father->has_right_sibling(j, right) && right->num_keys > m) {
+            if (child->is_leaf) {
 
             } else {
 
             }
+        } else {
 
-            break;
         }
-        case KeyPresentAtIndex: {
-
-            break;
+    } else if (child->num_keys >= m) {
+        if (j < father->num_keys && equals(key, father->keys[j])) {
+            father->keys[j] = *predecessor;
+            delete predecessor;
+            return nullptr;
         }
+        return predecessor;
     }
 }
 
@@ -210,13 +220,13 @@ void b_plus_tree<M, K, V, Greater, Index>::insert(V value) {
 //-----------------------------------------------------------------------------
 
 template<int M, typename K, typename V, typename Greater, typename Index>
-requires OrderConstraint<M>void b_plus_tree<M, K, V, Greater, Index>::remove(K key) {
+requires OrderConstraint<M>
+void b_plus_tree<M, K, V, Greater, Index>::remove(K key) {
     if (this->empty()) {
         return;
     }
 
-    RemoveCase remove_case = KeyNotPresentAtIndex;
-    remove_not_empty(key, root, remove_case);
+    this->remove(key, root);
 }
 
 //-----------------------------------------------------------------------------

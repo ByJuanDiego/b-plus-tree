@@ -38,11 +38,17 @@ struct node {
     virtual void split(node<K> *&father, int i, int order, int m) = 0;
 
     /// Reallocates the @param father pointers and keys after the current node is splitted
-    void reallocate(node<K> *& father, node<K> *sibling, int i, int m);
+    void reallocate(node<K> *&father, node<K> *sibling, int i, int m);
 
-    bool has_left_children(int j, node<K>*& left);
+    bool has_left_children(int j, node<K> *&left);
 
-    bool has_right_children(int j, node<K> *& right);
+    bool has_right_children(int j, node<K> *&right);
+
+    K *max_key();
+
+    K *min_key();
+
+
 };
 
 template<typename K>
@@ -60,12 +66,17 @@ struct internal_node : public node<K> {
     /// Splits a internal node into two nodes an reallocates the father and children references
     void split(node<K> *&father, int i, int order, int m) override;
 
+    std::pair<K, ::node<K> *> pop_back();
+
+    void push_front(node<K>* children);
+
+    void push_back(K key);
 };
 
 /**
  * Leaf node struct
  *
- * Kepps a reference of the previous leaf node and the next
+ * Keeps a reference of the previous leaf node and the next
  * For any node at the left of a leaf node,
  *     it is true that all their keys are lesser or equal to the keys stored at that leaf node
  *
@@ -79,7 +90,8 @@ struct leaf_node : public node<K> {
     leaf_node<K, V> *prev_leaf;     //< Pointer to the previous leaf
 
     /// Creates the node assigning the leaf tag as `true` by default
-    explicit leaf_node(int order, bool is_leaf = true, int num_keys = 0, leaf_node<K, V>* next_leaf = 0, leaf_node<K, V>* prev_leaf = 0);
+    explicit leaf_node(int order, bool is_leaf = true, int num_keys = 0, leaf_node<K, V> *next_leaf = 0,
+                       leaf_node<K, V> *prev_leaf = 0);
 
     /// Destructs the leaf node
     virtual ~leaf_node();
@@ -91,8 +103,14 @@ struct leaf_node : public node<K> {
     void split(node<K> *&father, int i, int order, int m) override;
 
     int locate_key(K key, auto greater);
-    
+
     void remove_key(K key, int index);
+
+    V pop_back();
+
+    void push_front(V value, auto index);
+
+    void push_back(K key, V value);
 };
 
 

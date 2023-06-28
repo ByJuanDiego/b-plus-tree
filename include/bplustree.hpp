@@ -19,13 +19,6 @@
 template<typename Printable>
 Print<Printable> print = [](std::ostream &os, const Printable &p) { os << p; };
 
-enum RemoveFlag {
-    RemovedFromLeaf, BadKey
-};
-enum RemoveCase {
-    KeyNotPresentAtIndex, KeyPresentAtIndex
-};
-
 /// Constraint to limit the values of M to integers greater than 2 before runtime
 template<int M>
 concept OrderConstraint = M >= MINIMUM_ORDER;
@@ -57,8 +50,8 @@ private:
     int n;              //< Number of records stored at leaf nodes
     int h;              //< Height of the tree
     node<K> *root;      //< Is a reference to the first level of the tree
-    Index index;        //< Receieves a value and returns it correspondany key
-    Greater greater;    //< Receieves two keys and returns true the first one is greater than the second
+    Index index;        //< Receives a value and returns it corresponding key
+    Greater greater;    //< Receives two keys and returns true the first one is greater than the second
 
     /** Recursive function that descends the tree to insert a new record at a leaf node
      *
@@ -71,7 +64,7 @@ private:
      */
     void non_full_insert(V value, node<K> *&node);
 
-    RemoveFlag remove(K key, node<K> *& node, RemoveCase& remove_case);
+    K *remove(K key, node<K> *&node);
 
     /** Iterative function that returns the first leaf node that stores key equal to `key`
      *
@@ -79,6 +72,10 @@ private:
      * If the key do not exists, returns the first leaf node that stores a key greater than `key`
      */
     leaf_node<K, V> *search_node(node<K> *node, K key);
+
+    inline bool equals(K a, K b) {
+        return !greater(a, b) && !greater(b, a);
+    }
 
 public:
 
@@ -121,7 +118,7 @@ public:
     /// Returns the records which index attribute are minimum
     std::list<V> search_min();
 
-    /// Returns the records which index attribute are maxmimum
+    /// Returns the records which index attribute are maximum
     std::list<V> search_max();
 
     /// Returns the records which index attribute are lesser than `upper_bound`

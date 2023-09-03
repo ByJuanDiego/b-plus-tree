@@ -1,1 +1,0 @@
-[(1:"(juandiego,fernando,1)")|(500:"(juandiego,carlos,500)")|(2200:"(juandiego,mishelle,2200)")]

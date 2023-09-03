@@ -37,18 +37,12 @@ struct node {
     /// Pure virtual member function in charge of split a node into two nodes
     virtual void split(node<K> *&father, int i, int order, int m) = 0;
 
-    /// Reallocates the @param father pointers and keys after the current node is splitted
+    /// Reallocates the @param father pointers and keys after the current node is split
     void reallocate(node<K> *&father, node<K> *sibling, int i, int m);
 
-    bool has_left_children(int j, node<K> *&left);
-
-    bool has_right_children(int j, node<K> *&right);
+    bool has_children_at(int j, node<K> *&node);
 
     K *max_key();
-
-    K *min_key();
-
-
 };
 
 template<typename K>
@@ -68,9 +62,11 @@ struct internal_node : public node<K> {
 
     std::pair<K, ::node<K> *> pop_back();
 
+    std::pair<K, ::node<K> *> pop_front();
+
     void push_front(K key, node<K> *children);
 
-    void push_back(K key);
+    void push_back(K key, node<K> *children);
 };
 
 /**
@@ -104,23 +100,17 @@ struct leaf_node : public node<K> {
 
     int locate_key(K key, auto greater);
 
-    void remove_key(K key, int index);
+    void remove_key(int index);
 
-    V pop_back();
+    std::pair<K, V> pop_back();
 
-    void push_front(V value, auto index);
+    std::pair<K, V> pop_front();
+
+    void push_front(K key, V value);
 
     void push_back(K key, V value);
 
-    K* predecessor(int i) {
-        if (i > 0) {
-            return &this->keys[i - 1];
-        }
-        else if (this->prev_leaf) {
-            return this->prev_leaf->max_key();
-        }
-        return nullptr;
-    }
+    K* predecessor(int i);
 };
 
 

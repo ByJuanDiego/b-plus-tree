@@ -1,3 +1,0 @@
-[11|50]
-[1][20|41][500|1500|2200]
-[(1:"(juandiego,fernando,1)")|(1:"(joaquin,renato,1)")|(1:"(joaquin,juandiego,1)")] <==> [(10:"(fernando,juandiego,10)")|(11:"(salvador,fernando,11)")] <==> [(15:"(nicolas,fernando,15)")|(20:"(nicolas,juandiego,20)")] <==> [(34:"(juandiego,joaquin,34)")|(41:"(nicolas,carlos,41)")] <==> [(45:"(salvador,carlos,45)")|(50:"(joaquin,carlos,50)")] <==> [(97:"(joaquin,renato,97)")|(500:"(juandiego,carlos,500)")] <==> [(1000:"(juandiego,joaquin,1000)")|(1000:"(fernando,carlos,1000)")|(1500:"(juandiego,nicolas,1500)")] <==> [(1500:"(joaquin,carlos,1500)")|(2200:"(juandiego,mishelle,2200)")] <==> [(2200:"(joaquin,fernando,2200)")|(2882:"(mishelle,juandiego,2882)")]

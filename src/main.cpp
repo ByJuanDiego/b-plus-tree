@@ -15,18 +15,18 @@ int main() {
     std::string emisor, receptor;
     int amount;
 
-    int j = 1;
+    std::ofstream insertTree("./utils/out/insert.txt");
     while (file >> emisor >> receptor >> amount) {
         auto *tx = new transaction(emisor, receptor, amount);
         bPlusTree.insert(tx);
         destructor.push_back(tx);
 
-        std::ofstream resultantTree("./utils/out/transactions_tree_step_" + std::to_string(j++) + ".txt");
-        bPlusTree.print(resultantTree, [](std::ostream &os, const transaction *tx) {
-            os << std::quoted(tx->to_string());
+        bPlusTree.print(insertTree, [](std::ostream &os, const transaction *tx) {
+            os << "";
         });
-        resultantTree.close();
+        insertTree << "\n\n";
     }
+    insertTree.close();
 
     bPlusTree.print(std::cout, [](std::ostream &os, const transaction *tx) {
             os << std::quoted(tx->to_string());
@@ -67,6 +67,16 @@ int main() {
         std::cout << tx->to_string() << std::endl;
     }
     std::cout << std::endl;
+
+    std::ofstream removeTree("./utils/out/remove.txt");
+    for (transaction* tx: destructor) {
+        bPlusTree.remove(tx->amount);
+        bPlusTree.print(removeTree, [](std::ostream &os, const transaction *tx) {
+            os << "";
+        });
+        removeTree << "\n\n";
+    }
+    removeTree.close();
 
     for (transaction *tx: destructor) {
         delete tx;

@@ -71,5 +71,4 @@ for (transaction *tx: destructor) {
 
 # To be implemented
 
-- ```remove()``` member function
 - ```iterator``` class for B+

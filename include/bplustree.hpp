@@ -26,9 +26,11 @@ concept OrderConstraint = M >= MINIMUM_ORDER;
 /**
  * B+ Tree index for queries with support for non-primary keys indexing
  *
- * In a B+ Tree of order M it is true that, for each node, at most it has M children and M-1 keys
- *    if at any moment that clause is not true, nodes are splitted recursively from down to up until the clause is true again or the root node is splitted
- *    in that last case, the pointer to the root is assigned to a new node and old root becomes the first child (children[0]) of the new root
+ * B+ Tree Index for Queries with Support for Non-Primary Keys Indexing
+ * In a B+ Tree of order M, it is true that each node can have at most M children and M-1 keys.
+ * If, at any moment, this condition is not met, nodes are recursively split from bottom to top until the condition is
+ * satisfied again, or the root node is split. In the latter case, a new node is created, and the pointer to the root
+ * is assigned to this new node, while the old root becomes the first child (children[0]) of the new root.
  *
  * @tparam M the order of the tree
  * @tparam K the type of the key
@@ -57,7 +59,7 @@ private:
      *
      * The base case is when a leaf node is reached, there is when the new record is inserted in order
      * Then, the function returns to the previous call and makes sure that his previous visited child do not exceeds the
-     *     maximum number of keys, if not, the node is splitted. The process is repeated until the first call is reached
+     *     maximum number of keys, if not, the node is split. The process is repeated until the first call is reached
      *
      * @param value the record to be inserted
      * @param node the current node
@@ -76,6 +78,8 @@ private:
     inline bool equals(K a, K b) {
         return !greater(a, b) && !greater(b, a);
     }
+
+    void merge(node<K>* &to_merge, node<K>* &to_add, node<K>* &father, int to_merge_pos);
 
 public:
 
@@ -105,7 +109,7 @@ public:
      *
      * Internally calls `non_full_insert`
      * Occasionally splits one or more nodes recursively
-     * When the `root` node is splited, `h` increases in 1
+     * When the `root` node is split, `h` increases in 1
      */
     void insert(V value);
 

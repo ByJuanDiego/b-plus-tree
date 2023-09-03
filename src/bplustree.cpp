@@ -3,6 +3,7 @@
 //
 
 #include "bplustree.hpp"
+#include <iostream>
 
 //-----------------------------------------------------------------------------
 
@@ -43,10 +44,10 @@ requires OrderConstraint<M>
 K *b_plus_tree<M, K, V, Greater, Index>::remove(K key, node<K> *&node) {
     if (node->is_leaf) {
         auto *leaf = reinterpret_cast<leaf_node<K, V> *>(node);
-        int searcher = leaf->search_key(key, greater);
+        int searcher = leaf->locate_key(key, greater);
 
         if (searcher == -1) {
-            return nullptr;
+            throw std::runtime_error("The record to delete do not exists!");
         }
 
         K *predecessor = leaf->predecessor(searcher);
@@ -61,42 +62,131 @@ K *b_plus_tree<M, K, V, Greater, Index>::remove(K key, node<K> *&node) {
     ::node<K> *&child = father->children[j];
     K *predecessor = remove(key, child);
 
+    bool merge_required = false;
     if (child->num_keys < m) {
-        ::node<K> (*left), (*right) = nullptr;
-        if (father->has_left_sibling(j, left) && left->num_keys > m) {
-            if (child->is_leaf) {
-                auto *leaf = reinterpret_cast<leaf_node<K, V> *>(child);
-                auto *left_leaf = reinterpret_cast<leaf_node<K, V> *>(left);
+        ::node<K>* sibling = nullptr;
 
-                V record_to_transfer = left_leaf->pop_back();
-                leaf->push_front(record_to_transfer, index);
+        if (child->is_leaf) {
+            auto *leaf = reinterpret_cast<leaf_node<K, V> *>(child);
+
+            if (father->has_children_at(j - 1, sibling) && sibling->num_keys > m) {
+                auto *left_leaf = reinterpret_cast<leaf_node<K, V> *>(sibling);
+                std::pair<K, V> to_transfer = left_leaf->pop_back();
+                leaf->push_front(to_transfer.first, to_transfer.second);
                 father->keys[j - 1] = *left_leaf->max_key();
-            } else {
-                auto *internal = reinterpret_cast<internal_node<K> *>(child);
-                auto *left_internal = reinterpret_cast<internal_node<K> *>(left);
 
+                if (j < father->num_keys) {
+                    father->keys[j] = *leaf->max_key();
+                }
+            }
+
+            else if (father->has_children_at(j + 1, sibling) && sibling->num_keys > m) {
+                auto *right_leaf = reinterpret_cast<leaf_node<K, V> *>(sibling);
+                std::pair<K, V> to_transfer = right_leaf->pop_front();
+                leaf->push_back(to_transfer.first, to_transfer.second);
+                father->keys[j] = *leaf->max_key();
+            }
+            else {
+                merge_required = true;
+            }
+        }
+        else {
+            auto *internal = reinterpret_cast<internal_node<K> *>(child);
+
+            if (father->has_children_at(j - 1, sibling) && sibling->num_keys > m) {
+                auto *left_internal = reinterpret_cast<internal_node<K> *>(sibling);
                 std::pair<K, ::node<K> *> to_transfer = left_internal->pop_back();
-                internal->push_front(to_transfer.first, to_transfer.second);
-                father->keys[j - 1] = left_internal->keys[left_internal->num_keys];
+                internal->push_front(father->keys[j - 1], to_transfer.second);
+                father->keys[j - 1] = to_transfer.first;
             }
-        } else if (father->has_right_sibling(j, right) && right->num_keys > m) {
-            if (child->is_leaf) {
+            else if (father->has_children_at(j + 1, sibling) && sibling->num_keys > m) {
+                auto *right_internal = reinterpret_cast<internal_node<K> *>(sibling);
+                std::pair<K, ::node<K> *> to_transfer = right_internal->pop_front();
 
-            } else {
-
+                internal->push_back(father->keys[j], to_transfer.second);
+                father->keys[j] = to_transfer.first;
             }
-        } else {
-            // merge
+            else {
+                merge_required = true;
+            }
+        }
+
+        if (merge_required) {
+            if (father->has_children_at(j - 1, sibling)) {
+                this->merge(sibling, child, father, (j - 1));
+            }
+            else if (father->has_children_at((j + 1), sibling)) {
+                if (predecessor && equals(key, father->keys[j])) {
+                    father->keys[j] = *predecessor;
+                    predecessor = nullptr;
+                }
+                this->merge(child, sibling, father, j);
+            }
         }
     }
 
     if (predecessor && j < father->num_keys && equals(key, father->keys[j])) {
         father->keys[j] = *predecessor;
-        delete predecessor;
         return nullptr;
     }
 
     return predecessor;
+}
+
+//-----------------------------------------------------------------------------
+
+template<int M, typename K, typename V, typename Greater, typename Index>
+requires OrderConstraint<M>void
+b_plus_tree<M, K, V, Greater, Index>::merge(node<K> *&to_merge, node<K> *&to_add, node<K> *&father, int to_merge_pos) {
+
+    if (to_merge->is_leaf) {
+        auto to_merge_leaf = reinterpret_cast<leaf_node<K, V>*>(to_merge);
+        auto to_add_leaf = reinterpret_cast<leaf_node<K, V>*>(to_add);
+
+        if (to_add_leaf->num_keys > 0) {
+            for (int i = 0; i < to_add->num_keys; i++) {
+                to_merge_leaf->push_back(to_add_leaf->keys[i], to_add_leaf->records[i]);
+            }
+        }
+        else {
+            father->keys[to_merge_pos + 1] = father->keys[to_merge_pos];
+        }
+
+        to_merge_leaf->next_leaf = to_add_leaf->next_leaf;
+        if (to_add_leaf->next_leaf) {
+            to_add_leaf->next_leaf->prev_leaf = to_merge_leaf;
+        }
+
+        delete to_add_leaf;
+
+        for (int i = to_merge_pos; i < (father->num_keys - 1); ++i) {
+            father->keys[i] = father->keys[(i + 1)];
+            father->children[(i + 1)] = father->children[(i + 2)];
+        }
+
+        --father->num_keys;
+    }
+    else {
+        auto to_merge_internal = reinterpret_cast<internal_node<K> *>(to_merge);
+        auto to_add_internal = reinterpret_cast<internal_node<K> *>(to_add);
+
+        to_merge_internal->push_back(father->keys[std::max(0, to_merge_pos - 1)], to_add_internal->children[0]);
+
+        for (int i = 0; i < to_add_internal->num_keys; ++i) {
+            to_merge_internal->push_back(to_add_internal->keys[i], to_add_internal->children[i + 1]);
+        }
+
+        delete to_add_internal;
+
+        for (int i = to_merge_pos; i < (father->num_keys - 1); ++i) {
+            father->keys[i] = father->keys[(i + 1)];
+            father->children[(i + 1)] = father->children[(i + 2)];
+        }
+
+        --father->num_keys;
+    }
+
+
 }
 
 //-----------------------------------------------------------------------------
@@ -224,6 +314,12 @@ void b_plus_tree<M, K, V, Greater, Index>::remove(K key) {
     }
 
     this->remove(key, root);
+
+    if (root->num_keys == 0) {
+        root = root->children[0];
+        --this->h;
+    }
+    --this->n;
 }
 
 //-----------------------------------------------------------------------------
@@ -373,6 +469,7 @@ template<int M, typename K, typename V, typename Greater, typename Index>
 requires OrderConstraint<M>
 void b_plus_tree<M, K, V, Greater, Index>::print(std::ostream &os, Print<V> print_value, Print<K> print_key) {
     if (!root) {
+        os << "[]";
         return;
     }
 

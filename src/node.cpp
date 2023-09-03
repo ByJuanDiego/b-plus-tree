@@ -276,10 +276,13 @@ void internal_node<K>::push_back(K key, node<K> *children) {
 template<typename K, typename V>
 K *leaf_node<K, V>::predecessor(int i) {
     if (i > 0) {
-        return &this->keys[i - 1];
+        return new K(this->keys[i - 1]);
     }
     else if (this->prev_leaf) {
-        return this->prev_leaf->max_key();
+        K* prev_node_max_key = this->prev_leaf->max_key();
+        if (prev_node_max_key) {
+            return new K(*prev_node_max_key);
+        }
     }
     return nullptr;
 }

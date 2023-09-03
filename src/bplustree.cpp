@@ -118,6 +118,7 @@ K *b_plus_tree<M, K, V, Greater, Index>::remove(K key, node<K> *&node) {
             else if (father->has_children_at((j + 1), sibling)) {
                 if (predecessor && equals(key, father->keys[j])) {
                     father->keys[j] = *predecessor;
+                    delete predecessor;
                     predecessor = nullptr;
                 }
                 this->merge(child, sibling, father, j);
@@ -127,7 +128,8 @@ K *b_plus_tree<M, K, V, Greater, Index>::remove(K key, node<K> *&node) {
 
     if (predecessor && j < father->num_keys && equals(key, father->keys[j])) {
         father->keys[j] = *predecessor;
-        return nullptr;
+        delete predecessor;
+        predecessor = nullptr;
     }
 
     return predecessor;
@@ -147,6 +149,7 @@ b_plus_tree<M, K, V, Greater, Index>::merge(node<K> *&to_merge, node<K> *&to_add
             for (int i = 0; i < to_add->num_keys; i++) {
                 to_merge_leaf->push_back(to_add_leaf->keys[i], to_add_leaf->records[i]);
             }
+            father->keys[to_merge_pos + 1] = *to_merge_leaf->max_key();
         }
         else {
             father->keys[to_merge_pos + 1] = father->keys[to_merge_pos];
@@ -170,7 +173,7 @@ b_plus_tree<M, K, V, Greater, Index>::merge(node<K> *&to_merge, node<K> *&to_add
         auto to_merge_internal = reinterpret_cast<internal_node<K> *>(to_merge);
         auto to_add_internal = reinterpret_cast<internal_node<K> *>(to_add);
 
-        to_merge_internal->push_back(father->keys[std::max(0, to_merge_pos - 1)], to_add_internal->children[0]);
+        to_merge_internal->push_back(father->keys[to_merge_pos], to_add_internal->children[0]);
 
         for (int i = 0; i < to_add_internal->num_keys; ++i) {
             to_merge_internal->push_back(to_add_internal->keys[i], to_add_internal->children[i + 1]);
@@ -274,12 +277,11 @@ bool b_plus_tree<M, K, V, Greater, Index>::find(K key) {
     }
 
     for (int i = 0; i < leaf->num_keys; ++i) {
-        if (greater(leaf->keys[i], key))
-            return false;
-        if (!greater(key, leaf->keys[i]))
-            break;
+        if (equals(key, leaf->keys[i])) {
+            return true;
+        }
     }
-    return true;
+    return false;
 }
 
 //-----------------------------------------------------------------------------

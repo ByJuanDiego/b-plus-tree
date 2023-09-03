@@ -1,85 +1,93 @@
 #include <iostream>
 #include <fstream>
-#include <iomanip>
+#include <random>
+#include <memory>
 
 #include "bplustree.cpp"
 #include "transaction.hpp"
 
-int main() {
-    auto index = [&](const transaction *tx) -> int { return tx->amount; };
-    auto greater = [&](int a, int b) -> bool { return a > b; };
-    b_plus_tree<4, int, transaction *, decltype(greater), decltype(index)> bPlusTree(index, greater);
-    std::list<transaction *> destructor;
-
-    std::ifstream file("./utils/assets/transactions.txt");
+void insertion_test(auto& tree) {
+    std::ifstream transactionsFile("./utils/database/transactions.txt");
     std::string emisor, receptor;
     int amount;
 
-    std::ofstream insertTree("./utils/out/insert.txt");
-    while (file >> emisor >> receptor >> amount) {
-        auto *tx = new transaction(emisor, receptor, amount);
-        bPlusTree.insert(tx);
-        destructor.push_back(tx);
+    std::ofstream insertTree("./logs/insert.txt");
+    while (transactionsFile >> emisor >> receptor >> amount) {
+        insertTree << "to insert: " << amount << std::endl;
 
-        bPlusTree.print(insertTree, [](std::ostream &os, const transaction *tx) {
+        std::shared_ptr<transaction> tx = std::make_shared<transaction>(emisor, receptor, amount);
+        tree.insert(tx);
+        tree.print(insertTree, [](std::ostream &os, const std::shared_ptr<transaction>& tx) {
             os << "";
         });
         insertTree << "\n\n";
     }
     insertTree.close();
+}
 
-    bPlusTree.print(std::cout, [](std::ostream &os, const transaction *tx) {
-            os << std::quoted(tx->to_string());
-    });
-
-
-    int key{2200};
-    if (bPlusTree.find(key)) {
-        for (const transaction *tx: bPlusTree.search(key)) {
+void search_test(auto& tree) {
+    int key {123};
+    if (tree.find(key)) {
+        for (const std::shared_ptr<transaction>& tx: tree.search(key)) {
             std::cout << tx->to_string() << std::endl;
         }
         std::cout << std::endl;
     }
 
-    for (const transaction *tx: bPlusTree.search_min()) {
+    for (const std::shared_ptr<transaction>& tx: tree.search_min()) {
         std::cout << tx->to_string() << std::endl;
     }
     std::cout << std::endl;
 
-    for (const transaction *tx: bPlusTree.search_max()) {
+    for (const std::shared_ptr<transaction>& tx: tree.search_max()) {
         std::cout << tx->to_string() << std::endl;
     }
     std::cout << std::endl;
 
-    for (const transaction *tx: bPlusTree.search_below(50, false)) {
+    for (const std::shared_ptr<transaction>& tx: tree.search_below(45, false)) {
         std::cout << tx->to_string() << std::endl;
     }
     std::cout << std::endl;
 
-    for (const transaction *tx: bPlusTree.search_above(1000, false)) {
+    for (const std::shared_ptr<transaction>& tx: tree.search_above(471, false)) {
         std::cout << tx->to_string() << std::endl;
     }
     std::cout << std::endl;
 
     int min{10}, max{97};
     bool include_min{true}, include_max{false};
-    for (const transaction *tx: bPlusTree.search_between(min, max, include_min, include_max)) {
+    for (const std::shared_ptr<transaction>& tx: tree.search_between(min, max, include_min, include_max)) {
         std::cout << tx->to_string() << std::endl;
     }
     std::cout << std::endl;
+}
 
-    std::ofstream removeTree("./utils/out/remove.txt");
-    for (transaction* tx: destructor) {
-        bPlusTree.remove(tx->amount);
-        bPlusTree.print(removeTree, [](std::ostream &os, const transaction *tx) {
-            os << "";
-        });
-        removeTree << "\n\n";
+void delete_test(auto& bPlusTree) {
+    std::uniform_int_distribution<int> dis(1, 499);
+    std::random_device rd;
+
+    std::ofstream removeTree("./logs/remove.txt");
+    while (!bPlusTree.empty()) {
+        int key = dis(rd);
+        if (bPlusTree.find(key)) {
+            removeTree << "to delete: " << key << std::endl;
+            bPlusTree.remove(key);
+            bPlusTree.print(removeTree,[](std::ostream &os, const std::shared_ptr<transaction>& tx) {
+                os << "";
+            });
+            removeTree << "\n\n";
+        }
     }
     removeTree.close();
+}
 
-    for (transaction *tx: destructor) {
-        delete tx;
-    }
-    return 0;
+int main() {
+    auto index = [&](const std::shared_ptr<transaction>& tx) -> int { return tx->amount; };
+    auto greater = [&](int a, int b) -> bool { return a > b; };
+    b_plus_tree<7, int, std::shared_ptr<transaction>, decltype(greater), decltype(index)> bPlusTree(index, greater);
+    insertion_test(bPlusTree);
+    search_test(bPlusTree);
+    delete_test(bPlusTree);
+
+    return EXIT_SUCCESS;
 }

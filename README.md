@@ -42,7 +42,7 @@ b_plus_tree<4, int, transaction *, decltype(greater), decltype(index)> bPlusTree
 ```greater``` is a function that, trivially, returns if an indexing value is greater than another
 
 > - this last function do not need to be passed as parameter; in that case, the type is assigned to ```std::greater```
-    by default. If the indexing attribute is not a comparable type by default (which is not recomendable)
+    by default. If the indexing attribute is not a comparable type by default (which is not recommendable)
     a [specialization of ```std::greater```](https://en.cppreference.com/w/cpp/utility/functional/greater) is necesary
 
 ## Querying
@@ -68,6 +68,8 @@ for (transaction *tx: destructor) {
     delete tx;
 }
 ```
+
+To manage this situation, optionally, a [```std::shared_ptr```](https://en.cppreference.com/w/cpp/memory/shared_ptr) could be used.
 
 # To be implemented
 
